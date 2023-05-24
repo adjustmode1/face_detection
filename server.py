@@ -10,6 +10,9 @@ from flask import session
 import json
 import pymysql
 from flask_cors import CORS
+import random
+import string
+
 pymysql.install_as_MySQLdb()
 
 app = Flask(__name__)
@@ -41,6 +44,13 @@ global known_face_names
 known_face_encodings = []
 known_face_names = []
 load_frame = True
+
+def get_random_string(length):
+    # choose from all lowercase letter
+    letters = string.ascii_lowercase
+    result_str = ''.join(random.choice(letters) for i in range(length))
+    return result_str
+
 def load_faces():
     # Set the folder path
     folder_path = app.config['UPLOAD_FOLDER'] + "/imgs"
@@ -170,7 +180,7 @@ def index():
     query = "select * from classes;"
     cursor.execute(query)
     cl = cursor.fetchall()
-    return render_template('views/school.html',classes=cl)
+    return render_template('introdution.html',classes=cl)
 # Define the route for the index page
 
 @app.route('/predict')
@@ -188,14 +198,57 @@ def admin():
         return redirect(url_for('login'))
     conn = db.connect()
     cursor = conn.cursor()
-    query = "select * from teachers;"
+    query = "select * from giaovien;"
     cursor.execute(query)
     gv = cursor.fetchall()
-    return render_template('views/admin/index.html',giaoviens=gv,role=session['role'])
+    return render_template('views/admin/giaovien.html',giaoviens=gv,role=session['role'])
+
 @app.route('/cam',methods=['GET'])
 def cam():
     load_faces()
     return render_template('predict.html')
+
+@app.route('/admin/classes',methods=['GET'])
+def lophoc():
+    if 'user' not in session:
+        return redirect(url_for('login'))
+    conn = db.connect()
+    cursor = conn.cursor()
+    query = "select * from lophoc;"
+    cursor.execute(query)
+    classes = cursor.fetchall()
+    return render_template('views/admin/classes.html',classes=classes,role=session['role'])
+
+@app.route('/admin/add_class',methods=['POST'])
+def add_lophoc():
+    if 'user' not in session:
+        return redirect(url_for('login'))
+    classname = request.form['name']
+    try:
+        conn = db.connect()
+        cursor = conn.cursor()
+        query = "insert into lophoc values(\'"+classname+"\');"
+        cursor.execute(query)
+        conn.commit()
+    except:
+        return redirect('/admin/classes')
+    return redirect('/admin/classes')
+
+@app.route('/admin/del_class',methods=['POST'])
+def del_lophoc():
+    if 'user' not in session:
+        return redirect(url_for('login'))
+    classname = request.form['name']
+    try:
+        conn = db.connect()
+        cursor = conn.cursor()
+        query = "delete from lophoc where id=\'"+classname+"\';"
+        print(query)
+        cursor.execute(query)
+        conn.commit()
+    except:
+        return redirect('/admin/classes')
+    return redirect('/admin/classes')
 
 @app.route('/admin/phuhuynh',methods=['GET'])
 def phuhuynh():
@@ -203,7 +256,7 @@ def phuhuynh():
         return redirect(url_for('login'))
     conn = db.connect()
     cursor = conn.cursor()
-    query = "select * from student_parents;"
+    query = "select * from phuhuynh;"
     cursor.execute(query)
     ph = cursor.fetchall()
     return render_template('views/admin/phuhuynh.html',phuhuynhs=ph,role=session['role'])
@@ -230,22 +283,20 @@ def login():
 def checklogin():
     conn = db.connect()
     cursor = conn.cursor()
-    query = "select * from teachers WHERE id=\'"+request.form['username']+"\' and password = \'"+request.form['password']+"\';"
+    query = "select * from giaovien WHERE id=\'"+request.form['username']+"\' and matkhau = \'"+request.form['password']+"\';"
     cursor.execute(query)
     account = cursor.fetchone()
+    print(account)
     if (account is None):
-        query = "select * from admin WHERE username=\'"+request.form['username']+"\' and password = \'"+request.form['password']+"\';"
-        cursor.execute(query)
-        account = cursor.fetchone()
-        if(account is None):
-            return redirect(url_for('login'))
-        session['user'] = account[0]
-        session['role'] = 1
-        return redirect(url_for('admin'))
+        return redirect(url_for('login'))
     else:
         session['user'] = account[0]
-        session['role'] = 0
-        return redirect(url_for('phuhuynh'))
+        session['role'] = account[6]
+        print(account[6])
+        if account[6] == 0:
+            return redirect(url_for('admin'))
+        else:
+            return redirect(url_for('phuhuynh'))
     
 @app.route('/admin/logout',methods=['POST'])
 def logout():
@@ -254,12 +305,6 @@ def logout():
     if 'role' in session:
         del session['role']
     return redirect(url_for('login'))
-    
-@app.route('/admin/add_phuhuyn',methods=['GET'])
-def add_phuhuynh():
-    if 'user' not in session:
-        return redirect(url_for('login'))
-    return render_template('views/admin/addphuhuynh.html',role=session['role'])
 
 @app.route('/admin/add_giaovien',methods=['POST'])
 def add_giaovien():
@@ -267,7 +312,7 @@ def add_giaovien():
         return redirect(url_for('login'))
     if 'role' not in session:
         return redirect(url_for('login'))
-    if session['role'] != 1:
+    if session['role'] != 0:
         return redirect(url_for('login'))
     name = request.form['name']
     code = request.form['code']
@@ -276,13 +321,39 @@ def add_giaovien():
         gender = 0
     birthday = request.form['birthday']
     password = request.form['password']
+    image = request.files['file']
+    try:
+        conn = db.connect()
+        cursor = conn.cursor()
+        newimage = get_random_string(15)
+        newimage = './static/uploads/teachers/'+newimage+'.'+image.filename.split('.')[1]
+        query = 'insert into giaovien values(\"'+code+'\",\"'+name+'\",\"'+newimage+'\",'+str(gender)+',\"'+birthday+'\",'+'\"'+password+'\"'+',0)'
+        print(query)   
+        cursor.execute(query)
+        conn.commit()
+        image.save('./static/uploads/teachers/'+newimage+'.'+image.filename.split('.')[1])
+    except:
+        return redirect(url_for('admin'))
+    return redirect(url_for('admin'))
+
+@app.route('/admin/del_giaovien',methods=['POST'])
+def del_giaovien():
+    if 'user' not in session:
+        return redirect(url_for('login'))
+    id = request.form['id']
     conn = db.connect()
     cursor = conn.cursor()
-    query = 'insert into teachers values(\"'+code+'\",\"'+name+'\",'+str(gender)+',\"'+birthday+'\",'+'\",'+password+'\"'+')'    
+    query = 'delete from giaovien where id=\"'+id+"\";" 
+    print(query)
     cursor.execute(query)
     conn.commit()
-    load_frame = False    
     return redirect(url_for('admin'))
+
+@app.route('/admin/add_phuhuyn',methods=['GET'])
+def add_phuhuynh():
+    if 'user' not in session:
+        return redirect(url_for('login'))
+    return render_template('views/admin/addphuhuynh.html',role=session['role'])
 
 @app.route('/admin/del_phuhuyn',methods=['POST'])
 def del_phuhuynh():
@@ -294,19 +365,6 @@ def del_phuhuynh():
     conn.commit()
     load_faces()
     return 'ok'
-
-@app.route('/admin/del_giaovien',methods=['POST'])
-def del_giaovien():
-    if 'user' not in session:
-        return redirect(url_for('login'))
-    id = request.form['id']
-    conn = db.connect()
-    cursor = conn.cursor()
-    query = 'delete from teachers where id=\"'+id+"\";" 
-    print(query)
-    cursor.execute(query)
-    conn.commit()
-    return redirect(url_for('admin'))
 
 @app.route('/capture', methods=['POST'])
 def capture():
@@ -323,7 +381,7 @@ def capture():
         gender = 0
 
     # Capture image from webcam
-    random_name = str(uuid.uuid4())
+    random_name = get_random_string(15)
     img_data = request.values['imageBase64']
     filename = os.path.join(app.config['UPLOAD_FOLDER'], f"imgs/{random_name}.jpg")
     textfilename = os.path.join(app.config['UPLOAD_FOLDER'], f"info/{random_name}.txt")

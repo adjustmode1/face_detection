@@ -1,0 +1,76 @@
+{%extends 'index.html'%}
+{% block body %}
+<header class="py-5">
+  <div class="container px-lg-5">
+    <div
+      class="p-4 p-lg-5 bg-light rounded-3 text-center"
+      style="
+        background-image: url('/static/img/hero.png');
+        background-size: contain;
+        background-repeat: no-repeat;
+      "
+    >
+      <div class="m-4 m-lg-5">
+        <h1 class="display-5 fw-bold">Xin chào</h1>
+        <p class="fs-4">Cách tốt nhất để tài trợ cho việc học tập của bạn</p>
+      </div>
+    </div>
+  </div>
+</header>
+<!-- Page Content-->
+<section class="pt-4">
+  <div class="container px-lg-5">
+    <!-- Page Features-->
+    <div class="row gx-lg-5">
+      <div class="col-lg-6 col-xxl-4 mb-5">
+        <div class="card bg-light border-0 h-100">
+          <div
+            class="card-body text-center p-4 p-lg-5 pt-0 pt-lg-0"
+            style="
+              background-image: url('/static/img/about.png');
+              background-size: contain;
+              background-repeat: no-repeat;
+            "
+          >
+            <div
+              class="feature bg-primary bg-gradient text-white rounded-3 mb-4 mt-n4"
+            >
+              <i class="bi bi-collection"></i>
+            </div>
+            <h2 class="fs-4 fw-bold">Chi tiết trường học</h2>
+            <p class="mb-0" style="color: black">
+              cơ sở giáo dục được thiết kế để cung cấp môi trường học tập cho
+              các học sinh. Nó có vai trò quan trọng trong việc truyền đạt kiến
+              thức, phát triển kỹ năng và xây dựng nhân cách của cá nhân. Dưới
+              đây là một miêu tả tổng quan về một trường học.
+            </p>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-6 col-xxl-4 mb-5">
+        <div class="card bg-light border-0 h-100">
+          <div
+            class="card-body text-center p-4 p-lg-5 pt-0 pt-lg-0"
+            style="
+              background-image: url('/static/img/admission.png');
+              background-size: contain;
+              background-repeat: no-repeat;
+            "
+          >
+            <div
+              class="feature bg-primary bg-gradient text-white rounded-3 mb-4 mt-n4"
+            >
+              <i class="bi bi-cloud-download"></i>
+            </div>
+            <h2 class="fs-4 fw-bold">Xác định quyền cho bạn</h2>
+            <p class="mb-0" style="color: black">
+              Học sinh tại trường học có một số quyền cơ bản được công nhận và
+              bảo vệ để đảm bảo môi trường học tập công bằng và an toàn.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock%}

@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+
+{% block header %}
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <div class="container px-lg-5">
+      <a class="navbar-brand" href="/">School</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+              <li class="nav-item"><a class="nav-link active" aria-current="page" href="/">Home</a></li>
+              <li class="nav-item">
+                <div class="dropdown">
+                  <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    classes
+                  </button>
+                  <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                    {%
+                      for cl in classes
+                    %}
+                      <a class="dropdown-item" href={{"/classes?class="+cl[1]}}>Lớp {{cl[1]}}</a>
+                    {%endfor%}
+                  </div>
+                </div>
+              </li>
+              <li class="nav-item"><a class="nav-link" href="/cam">Nhận diện</a></li>
+          </ul>
+      </div>
+  </div>
+</nav>
+{% endblock %}
+
+{% block footer %}
+<footer class="w-100 py-4 flex-shrink-0">
+  <div class="container py-4">
+      <div class="row gy-4 gx-5">
+          <div class="col-lg-4 col-md-6">
+              <h5 class="h1 text-white">School</h5>
+              <p class="small text-muted">Địa chỉ: Xuân khánh, Ninh kiều, Cần Thơ</p>
+              <p class="small text-muted">Số điện thoại: 0134534857</p>
+              <p class="small text-muted mb-0">&copy; Copyrights. All rights reserved. <a class="text-primary" href="#">Bootstrapious.com</a></p>
+          </div>
+          <div class="col-lg-2 col-md-6">
+              <h5 class="text-white mb-3">Quick links</h5>
+              <ul class="list-unstyled text-muted">
+                  <li><a href="#">Home</a></li>
+                  <li><a href="#">About</a></li>
+                  <li><a href="#">Get started</a></li>
+                  <li><a href="#">FAQ</a></li>
+              </ul>
+          </div>
+          <div class="col-lg-2 col-md-6">
+              <h5 class="text-white mb-3">Quick links</h5>
+              <ul class="list-unstyled text-muted">
+                  <li><a href="#">Home</a></li>
+                  <li><a href="#">About</a></li>
+                  <li><a href="#">Get started</a></li>
+                  <li><a href="#">FAQ</a></li>
+              </ul>
+          </div>
+      </div>
+  </div>
+</footer>
+{% endblock %}
