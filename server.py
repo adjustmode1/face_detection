@@ -228,7 +228,7 @@ def add_lophoc():
     try:
         conn = db.connect()
         cursor = conn.cursor()
-        query = "insert into lophoc values(\'"+classname+"\');"
+        query = "insert into lophoc values(\'"+classname.upper()+"\');"
         cursor.execute(query)
         conn.commit()
     except:
@@ -294,11 +294,19 @@ def classes():
 def view_lophoc(id):
     conn = db.connect()
     cursor = conn.cursor()
-    query = "select * from lophoc where id=\'"+id+"\';"
+    query = "select * from lophoc_hocsinh where id_lophoc=\'"+id+"\';"
     cursor.execute(query)
     lh = cursor.fetchall()
+    query = "select * from giaovien"
+    cursor.execute(query)
+    gv = cursor.fetchall()    
+    query = "select * from hocsinh"
+    cursor.execute(query)
+    hocsinh = cursor.fetchall() 
+    print(hocsinh)
+    print('000000')
     print(lh)
-    return render_template('views/classes.html',lophoc=lh)
+    return render_template('views/classes.html',lophoc=lh,gv=gv,hs=hocsinh)
     
 @app.route('/test')
 def test():
@@ -463,18 +471,18 @@ def add_student():
     birthday = request.form['birthday']
     image = request.files['file']
     print(image)
-    try:
-        conn = db.connect()
-        cursor = conn.cursor()
-        newimage = get_random_string(15)
-        newimage = 'static/uploads/imgs/'+newimage+'.'+image.filename.split('.')[1]
-        query = 'insert into hocsinh(ten,hinhanh,gioitinh,ngaysinh) values(\"'+name+'\",\"'+newimage+'\",'+str(gender)+',\"'+birthday+'\")'
-        print(query)   
-        cursor.execute(query)
-        conn.commit()
-        image.save('/static/uploads/imgs/'+newimage+'.'+image.filename.split('.')[1])
-    except:
-        return redirect(url_for('student'))
+    # try:
+    conn = db.connect()
+    cursor = conn.cursor()
+    newimage = get_random_string(15)
+    newimage = newimage+'.'+image.filename.split('.')[1]
+    query = 'insert into hocsinh(ten,hinhanh,gioitinh,ngaysinh) values(\"'+name+'\",\"'+newimage+'\",'+str(gender)+',\"'+birthday+'\")'
+    print(query)   
+    cursor.execute(query)
+    conn.commit()
+    image.save(os.path.join(app.config['UPLOAD_FOLDER'],newimage))
+    # except:
+        # return redirect(url_for('student'))
     return redirect(url_for('student'))
 
 @app.route('/admin/del_student',methods=['POST'])
