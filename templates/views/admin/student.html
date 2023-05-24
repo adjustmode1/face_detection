@@ -5,13 +5,10 @@
         <div class="table-title">
           <div class="row">
             <div class="col-sm-6">
-              <h2>Quản lý<b> Phụ Huynh</b></h2>
+              <h2>Quản lý<b> Học sinh</b></h2>
             </div>
             <div class="col-sm-6">
-              <a href="/admin/add_phuhuyn" class="btn btn-success"
-                ><i class="material-icons">&#xE147;</i>
-                <span>Thêm phụ huynh</span></a
-              >
+              <a href="#addEmployeeModal" class="btn btn-success" data-toggle="modal"><i class="material-icons">&#xE147;</i> <span>Thêm học sinh</span></a>
             </div>
           </div>
         </div>
@@ -26,24 +23,24 @@
             </tr>
           </thead>
           <tbody>
-            {% for x in phuhuynhs %}
-            <tr>
-              <td>{{x[1]}}</td>
-              <td><img src="/{{x[2]}}" width="50%"/></td>
-              <td>
+            {% for x in hocsinh %}
+            <tr style="cursor:pointer">
+              <td onClick="phuhuynh({{x[0]}})" >{{x[1]}}</td>
+              <td onClick="phuhuynh({{x[0]}})" ><img src="/{{x[2]}}" width="50%"/></td>
+              <td onClick="phuhuynh({{x[0]}})" >
                 {% if x[3] == 1 %} nam {%endif%} {% if x[3] == 0 %} nữ {%endif%}
                 {% if x[3] == 2 %} khác {%endif%}
               </td>
-              <td>{{x[4]}}</td>
+              <td onClick="phuhuynh({{x[0]}})" >{{x[4]}}</td>
               <td>
                 <td>
-                  <a href={{'#deleteEmployeeModal'+x[0]}} class="delete" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Delete">&#xE872;</i></a>
-                  <div id={{'deleteEmployeeModal'+x[0]}} class="modal fade">
+                  <a href={{'#deleteEmployeeModal'+x[1]}} class="delete" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Delete">&#xE872;</i></a>
+                  <div id={{'deleteEmployeeModal'+x[1]}} class="modal fade">
                       <div class="modal-dialog">
                           <div class="modal-content">
-                              <form action='/admin/del_phuhuynh' method="post">
+                              <form action='/admin/del_student' method="post">
                                   <div class="modal-header">						
-                                      <h4 class="modal-title">Xóa phụ huynh</h4>
+                                      <h4 class="modal-title">Xóa học sinh</h4>
                                       <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
                                   </div>
                                   <div class="modal-body">					
@@ -71,15 +68,15 @@
     <div id="addEmployeeModal" class="modal fade">
       <div class="modal-dialog">
         <div class="modal-content">
-          <form id="user-form">
+          <form id="user-form" method="POST" action="/admin/add_student" enctype="multipart/form-data">
             <div class="modal-header">
-              <h4 class="modal-title">Thêm phụ huynh</h4>
+              <h4 class="modal-title">Thêm học sinh</h4>
               <a href="">&times;</a>
             </div>
             <div class="modal-body">
               <div class="form-group">
                 <label>Hình ảnh:</label>
-                <input type="file" name='image' class="form-control" />
+                <input type="file" name='file' class="form-control" />
                 <img id="face" class="hidden" width="100%" />
                 <div class="btn form-control" id="showcamera">
                   <i class="fa-solid fa-camera"></i>
@@ -94,21 +91,11 @@
                 <input type="date" name='birthday' class="form-control" required/>
               </div>
               <div class="form-group">
-                <label>Địa chỉ</label>
-                <input type="text" name='address' class="form-control" required/>
-              </div>
-
-              <div class="form-group">
-                <label>Phone:</label>
-                <input type="tel" name='phone' class="form-control" required/>
-              </div>
-              <div class="form-group">
                 <label for="gender">Gender:</label>
                 <select class="form-control" id="gender" name="gender">
                   <option value="">Select Gender</option>
                   <option value="male">Male</option>
                   <option value="female">Female</option>
-                  <option value="other">Other</option>
                 </select>
               </div>
             </div>
@@ -171,7 +158,9 @@
           </form>
         </div>
       </div>
-
+      <script>
+        function phuhuynh(id){
+          window.location.href = '/admin/add_phuhuyn/'+id
+        }
+      </script>
     {% endblock %}
-  </div>
-</div>

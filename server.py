@@ -37,7 +37,7 @@ db.init_app(app)
 #   2. Only detect faces in every other frame of video.
 
 # Get a reference to webcam #0 (the default one)
-video_capture = cv2.VideoCapture(0)
+# video_capture = cv2.VideoCapture(0)
 
 global known_face_encodings 
 global known_face_names 
@@ -149,6 +149,7 @@ def predict(frame):
 # Define the video stream generator function
 def gen_frames():
     global load_frame
+    video_capture = cv2.VideoCapture(0)
     while load_frame:
         # Read the video stream from the webcam
         success, frame = video_capture.read()
@@ -168,18 +169,18 @@ def gen_frames():
                    b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
 @app.route('/stop_cam')
 def stopcam():
-    capture.release()
-    # Destroy all the windows
-    cv2.destroyAllWindows()            
+    global load_frame
+    load_frame = False
 
 # Define the route for the index page
 @app.route('/')
 def index():
     conn = db.connect()
     cursor = conn.cursor()
-    query = "select * from classes;"
+    query = "select * from lophoc;"
     cursor.execute(query)
     cl = cursor.fetchall()
+    print(cl)
     return render_template('introdution.html',classes=cl)
 # Define the route for the index page
 
@@ -261,15 +262,43 @@ def phuhuynh():
     ph = cursor.fetchall()
     return render_template('views/admin/phuhuynh.html',phuhuynhs=ph,role=session['role'])
 
+@app.route('/admin/quanly_class',methods=['GET'])
+def quanly_class():
+    if 'user' not in session:
+        return redirect(url_for('login'))
+    conn = db.connect()
+    cursor = conn.cursor()
+    query = "select * from lophoc_hocsinh where id_giaovien=\'"+session['user']+"\'"
+    cursor.execute(query)
+    lophoc_hocsinh = cursor.fetchall()
+    print(lophoc_hocsinh)
+    query = "select * from hocsinh;"
+    cursor.execute(query)
+    hocsinh = cursor.fetchall()
+    query = "select * from giaovien"
+    cursor.execute(query)
+    giaovien = cursor.fetchall()
+    return render_template('views/admin/student_class.html',classes=lophoc_hocsinh,role=session['role'])
+
 @app.route('/classes',methods=['GET'])
 def classes():
     query = request.args.get('class')
     conn = db.connect()
     cursor = conn.cursor()
-    query = "select * from student_parents where class=\'"+query+"\';"
+    query = "select * from lophoc where id=\'"+query+"\';"
     cursor.execute(query)
     ph = cursor.fetchall()
     return render_template('views/classes.html',phuhuynhs=ph)
+
+@app.route('/classes/<id>',methods=['GET'])
+def view_lophoc(id):
+    conn = db.connect()
+    cursor = conn.cursor()
+    query = "select * from lophoc where id=\'"+id+"\';"
+    cursor.execute(query)
+    lh = cursor.fetchall()
+    print(lh)
+    return render_template('views/classes.html',lophoc=lh)
     
 @app.route('/test')
 def test():
@@ -326,12 +355,12 @@ def add_giaovien():
         conn = db.connect()
         cursor = conn.cursor()
         newimage = get_random_string(15)
-        newimage = './static/uploads/teachers/'+newimage+'.'+image.filename.split('.')[1]
+        newimage = '/static/uploads/teachers/'+newimage+'.'+image.filename.split('.')[1]
         query = 'insert into giaovien values(\"'+code+'\",\"'+name+'\",\"'+newimage+'\",'+str(gender)+',\"'+birthday+'\",'+'\"'+password+'\"'+',0)'
         print(query)   
         cursor.execute(query)
         conn.commit()
-        image.save('./static/uploads/teachers/'+newimage+'.'+image.filename.split('.')[1])
+        image.save('/static/uploads/teachers/'+newimage+'.'+image.filename.split('.')[1])
     except:
         return redirect(url_for('admin'))
     return redirect(url_for('admin'))
@@ -349,33 +378,145 @@ def del_giaovien():
     conn.commit()
     return redirect(url_for('admin'))
 
+@app.route('/admin/teacher_class',methods=['GET'])
+def teacher_class():
+    if 'user' not in session:
+        return redirect(url_for('login'))
+    conn = db.connect()
+    cursor = conn.cursor()
+    query = 'select * from lophoc_giaovien' 
+    cursor.execute(query)
+    lophoc_giaovien = cursor.fetchall()
+    query = 'SELECT * FROM lophoc'
+    cursor.execute(query)
+    lophoc = cursor.fetchall()
+    query = 'SELECT * FROM giaovien'
+    cursor.execute(query)
+    giaovien = cursor.fetchall()
+    return render_template('views/admin/teacher_class.html',classes=lophoc_giaovien,lophoc_giaovien=lophoc,giaovien=giaovien,role=session['role'])
+
+@app.route('/admin/add_teacher_class',methods=['POST'])
+def add_teacher_class():
+    if 'user' not in session:
+        return redirect(url_for('login'))
+    lophoc = request.form['class']
+    giaovien = request.form['teacher']
+    conn = db.connect()
+    cursor = conn.cursor()
+    query = 'insert into lophoc_giaovien values(\"'+lophoc+'\",\"'+giaovien+'\")' 
+    cursor.execute(query)
+    conn.commit()
+    return redirect(url_for('teacher_class'))
+
+@app.route('/admin/del_teacher_class',methods=['POST'])
+def del_teacher_class():
+    if 'user' not in session:
+        return redirect(url_for('login'))
+    try:
+        lophoc = request.form['class']
+        giaovien = request.form['teacher']
+        conn = db.connect()
+        cursor = conn.cursor()
+        query = 'delete from lophoc_giaovien where id_lophoc=\"'+lophoc+'\" and id_giaovien=\"'+giaovien+'\"' 
+        cursor.execute(query)
+        conn.commit()
+    except:
+        return redirect(url_for('teacher_class'))
+    return redirect(url_for('teacher_class'))
+
 @app.route('/admin/add_phuhuyn',methods=['GET'])
 def add_phuhuynh():
     if 'user' not in session:
         return redirect(url_for('login'))
-    return render_template('views/admin/addphuhuynh.html',role=session['role'])
+    return render_template('views/admin/addphuhuynh.html',student=-1,role=session['role'])
 
-@app.route('/admin/del_phuhuyn',methods=['POST'])
+@app.route('/admin/add_phuhuyn/<id>',methods=['GET'])
+def add_phuhuynh_and_student(id):
+    if 'user' not in session:
+        return redirect(url_for('login'))
+    return render_template('views/admin/addphuhuynh.html',student=id,role=session['role'])
+
+@app.route('/admin/student',methods=['GET'])
+def student():
+    if 'user' not in session:
+        return redirect(url_for('login'))
+    conn = db.connect()
+    cursor = conn.cursor()
+    query = 'select * from hocsinh' 
+    cursor.execute(query)
+    hocsinh = cursor.fetchall()
+    print(hocsinh)
+    return render_template('views/admin/student.html',hocsinh=hocsinh,role=session['role'])
+
+@app.route('/admin/add_student',methods=['POST'])
+def add_student():
+    if 'user' not in session:
+        return redirect(url_for('login'))
+    if 'role' not in session:
+        return redirect(url_for('login'))
+    if session['role'] != 1:
+        return redirect(url_for('login'))
+    name = request.form['name']
+    gender = 1
+    if request.form['gender'] == 'female':
+        gender = 0
+    birthday = request.form['birthday']
+    image = request.files['file']
+    print(image)
+    try:
+        conn = db.connect()
+        cursor = conn.cursor()
+        newimage = get_random_string(15)
+        newimage = 'static/uploads/imgs/'+newimage+'.'+image.filename.split('.')[1]
+        query = 'insert into hocsinh(ten,hinhanh,gioitinh,ngaysinh) values(\"'+name+'\",\"'+newimage+'\",'+str(gender)+',\"'+birthday+'\")'
+        print(query)   
+        cursor.execute(query)
+        conn.commit()
+        image.save('/static/uploads/imgs/'+newimage+'.'+image.filename.split('.')[1])
+    except:
+        return redirect(url_for('student'))
+    return redirect(url_for('student'))
+
+@app.route('/admin/del_student',methods=['POST'])
+def del_student():
+    if 'user' not in session:
+        return redirect(url_for('login'))
+    if 'role' not in session:
+        return redirect(url_for('login'))
+    if session['role'] != 1:
+        return redirect(url_for('login'))
+    name = request.form['id']
+    try:
+        conn = db.connect()
+        cursor = conn.cursor()
+        query = 'delete from hocsinh where id=\"'+name+'\"'
+        print(query)   
+        cursor.execute(query)
+        conn.commit()
+    except:
+        return redirect(url_for('student'))
+    return redirect(url_for('student'))
+
+@app.route('/admin/del_phuhuynh',methods=['POST'])
 def del_phuhuynh():
     id = request.form['id']
     conn = db.connect()
     cursor = conn.cursor()
-    query = 'delete from student_parents where id=\"'+id+"\""
+    query = 'delete from phuhuynh where id=\"'+id+"\""
     cursor.execute(query)
     conn.commit()
+    os.remove('static/uploads/imgs/'+id+'.jpg')
+    os.remove('static/uploads/info/'+id+'.txt')
     load_faces()
-    return 'ok'
+    return redirect(url_for('phuhuynh'))
 
 @app.route('/capture', methods=['POST'])
 def capture():
     # Get user input from form
     name = request.form['name']
-    sub_name = request.form['sub_name']
     birthday = request.form['birthday']
-    sub_birthday = request.form['sub_birthday']
-    sub_class = request.form['class']
-    teacher = request.form['teacher']
     phone = request.form['phone']
+    address = request.form['address']
     gender = 1
     if request.form['gender'] == 'female':
         gender = 0
@@ -383,20 +524,25 @@ def capture():
     # Capture image from webcam
     random_name = get_random_string(15)
     img_data = request.values['imageBase64']
-    filename = os.path.join(app.config['UPLOAD_FOLDER'], f"imgs/{random_name}.jpg")
+    filename = app.config['UPLOAD_FOLDER']+"/imgs/"+random_name+".jpg"
     textfilename = os.path.join(app.config['UPLOAD_FOLDER'], f"info/{random_name}.txt")
     with open(filename, "wb") as fh:
         fh.write(base64.b64decode(img_data.split(',')[1]))
 
     # Save user input to a text file
     with open(textfilename, 'a', encoding="utf-8") as file:
-        file.write(f"{name},{birthday},{sub_name},{sub_birthday},{sub_class},{phone},{teacher},{gender},{filename}\n")
+        file.write(f"{name},{birthday},{phone},{gender},{address},{filename}\n")
 
     conn = db.connect()
     cursor = conn.cursor()
-    query = 'insert into student_parents values(\"'+random_name+'\",\"'+filename+'\",\"'+name+'\",\"'+birthday+'\",'+'\",'+sub_name+'\",\"'+sub_birthday+'\",\"'+sub_class+'\",\"'+phone+'\",\"'+teacher+'\",'+str(gender)+')'    
+    query = 'insert into phuhuynh values(\"'+random_name+'\",\"'+name+'\",\"'+filename+'\",'+str(gender)+',\"'+phone+'\",\"'+birthday+'\",\"'+address+'\")'    
+    print(query)
     cursor.execute(query)
     conn.commit()
+    if request.form['student']:
+        query = 'insert into phuhuynh_hocsinh values(\"'+random_name+'\",\"'+request.form['student']+'\")'
+        cursor.execute(query)
+        conn.commit()
     return 'Image and data saved successfully'
 
 
@@ -405,14 +551,16 @@ def capture():
 def video_feed():
     return Response(gen_frames(), mimetype='multipart/x-mixed-replace; boundary=frame')
 
+def pred(frame):
+
+    yield "data: {}\n\n".format(predict(frame)) 
+
+video_capture1 = cv2.VideoCapture(0)
 @app.route("/face_detection")
 def face_regco():
-    def pred(frame):
 
-        yield "data: {}\n\n".format(predict(frame)) 
-
-    while True:
-        success, frame = video_capture.read()
+    while load_frame:
+        success, frame = video_capture1.read()
         try:
             return Response(pred(frame), mimetype="text/event-stream")
         except TypeError:
