@@ -19,29 +19,22 @@
           <thead>
             <tr>
               <th>Tên</th>
-              <th>Sinh năm</th>
-              <th>Học sinh</th>
-              <th>Năm Sinh học sinh</th>
-              <th>Lớp</th>
-              <th>Giáo viên</th>
-              <th>Số điện thoại</th>
+              <th>Ảnh</th>
               <th>Giới tính</th>
+              <th>Ngày sinh</th>
+              <th>Địa chỉ</th>
             </tr>
           </thead>
           <tbody>
             {% for x in phuhuynhs %}
             <tr>
+              <td>{{x[1]}}</td>
               <td>{{x[2]}}</td>
-              <td>{{x[3]}}</td>
-              <td>{{x[4]}}</td>
-              <td>{{x[5]}}</td>
-              <td>{{x[6]}}</td>
-              <td>{{x[8]}}</td>
-              <td>{{x[7]}}</td>
               <td>
-                {% if x[9] == 1 %} nam {%endif%} {% if x[9] == 0 %} nữ {%endif%}
-                {% if x[9] == 2 %} khác {%endif%}
+                {% if x[3] == 1 %} nam {%endif%} {% if x[3] == 0 %} nữ {%endif%}
+                {% if x[3] == 2 %} khác {%endif%}
               </td>
+              <td>{{x[4]}}</td>
               <td>
                 <div
                   class="delete"
@@ -72,7 +65,7 @@
             <div class="modal-body">
               <div class="form-group">
                 <label>Hình ảnh:</label>
-                <input type="file" class="form-control" />
+                <input type="file" name='image' class="form-control" />
                 <img id="face" class="hidden" width="100%" />
                 <div class="btn form-control" id="showcamera">
                   <i class="fa-solid fa-camera"></i>
@@ -80,32 +73,20 @@
               </div>
               <div class="form-group">
                 <label>Tên</label>
-                <input type="text" class="form-control" />
+                <input type="text" name='name' class="form-control" required/>
               </div>
               <div class="form-group">
                 <label>Năm sinh</label>
-                <input type="email" class="form-control" />
+                <input type="date" name='birthday' class="form-control" required/>
               </div>
               <div class="form-group">
-                <label>Học sinh:</label>
-                <input type="text" class="form-control" />
-              </div>
-              <div class="form-group">
-                <label>Năm sinh học sinh:</label>
-                <input type="text" class="form-control" />
-              </div>
-              <div class="form-group">
-                <label>Lớp:</label>
-                <input type="text" class="form-control" />
-              </div>
-              <div class="form-group">
-                <label>Giáo viên:</label>
-                <input type="text" class="form-control" />
+                <label>Địa chỉ</label>
+                <input type="text" name='address' class="form-control" required/>
               </div>
 
               <div class="form-group">
                 <label>Phone:</label>
-                <input type="text" class="form-control" />
+                <input type="tel" name='phone' class="form-control" required/>
               </div>
               <div class="form-group">
                 <label for="gender">Gender:</label>
