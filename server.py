@@ -37,7 +37,7 @@ db.init_app(app)
 #   2. Only detect faces in every other frame of video.
 
 # Get a reference to webcam #0 (the default one)
-# video_capture = cv2.VideoCapture(0)
+video_capture = cv2.VideoCapture(0)
 
 global known_face_encodings 
 global known_face_names 
@@ -93,64 +93,68 @@ left = right = top = bottom =None
 def predict(frame):
     if len(known_face_encodings) == 0:
         return "Unknown"
+    if frame is None:
+        return "Unknown"
     # Resize frame of video to 1/4 size for faster face recognition processing
-    small_frame = cv2.resize(frame, (0, 0), fx=0.2, fy=0.2)
+    try:
+        small_frame = cv2.resize(frame, (0, 0), fx=0.2, fy=0.2)
 
-    # Convert the image from BGR color (which OpenCV uses) to RGB color (which face_recognition uses)
-    rgb_small_frame = small_frame[:, :, ::-1]
-    
-    # Find all the faces and face encodings in the current frame of video
-    face_locations = face_recognition.face_locations(rgb_small_frame)
-    face_encodings = face_recognition.face_encodings(rgb_small_frame, face_locations)
+        # Convert the image from BGR color (which OpenCV uses) to RGB color (which face_recognition uses)
+        rgb_small_frame = small_frame[:, :, ::-1]
+        
+        # Find all the faces and face encodings in the current frame of video
+        face_locations = face_recognition.face_locations(rgb_small_frame)
+        face_encodings = face_recognition.face_encodings(rgb_small_frame, face_locations)
 
-    face_names = []
-    for face_encoding in face_encodings:
-        # See if the face is a match for the known face(s)
-        matches = face_recognition.compare_faces(known_face_encodings, face_encoding)
-        name = "Unknown"
+        face_names = []
+        for face_encoding in face_encodings:
+            # See if the face is a match for the known face(s)
+            matches = face_recognition.compare_faces(known_face_encodings, face_encoding)
+            name = "Unknown"
 
-        # If a match was found in known_face_encodings, just use the first one.
-        if True in matches:
-            first_match_index = matches.index(True)
-            name = known_face_names[first_match_index]
+            # If a match was found in known_face_encodings, just use the first one.
+            if True in matches:
+                first_match_index = matches.index(True)
+                name = known_face_names[first_match_index]
 
-        # Or instead, use the known face with the smallest distance to the new face
-        face_distances = face_recognition.face_distance(known_face_encodings, face_encoding)
-        best_match_index = np.argmin(face_distances)
-        print(best_match_index)
-        if matches[best_match_index]:
-            name = known_face_names[best_match_index]
+            # Or instead, use the known face with the smallest distance to the new face
+            face_distances = face_recognition.face_distance(known_face_encodings, face_encoding)
+            best_match_index = np.argmin(face_distances)
+            if matches[best_match_index]:
+                name = known_face_names[best_match_index]
 
-        face_names.append(name)
-    # global process_this_frame
-    # process_this_frame = not process_this_frame
+            face_names.append(name)
+        # global process_this_frame
+        # process_this_frame = not process_this_frame
 
 
-    # Display the results
-    name_res = 'Unknown'
-    for (top, right, bottom, left), name in zip(face_locations, face_names):
-        # Scale back up face locations since the frame we detected in was scaled to 1/4 size
-        top *= 5
-        right *= 5
-        bottom *= 5
-        left *= 5
+        # Display the results
+        name_res = 'Unknown'
+        for (top, right, bottom, left), name in zip(face_locations, face_names):
+            # Scale back up face locations since the frame we detected in was scaled to 1/4 size
+            top *= 5
+            right *= 5
+            bottom *= 5
+            left *= 5
 
-        # Draw a label with a name below the face
-        # cv2.rectangle(frame, (left, bottom - 35), (right, bottom), (0, 0, 255), cv2.FILLED)
+            # Draw a label with a name below the face
+            # cv2.rectangle(frame, (left, bottom - 35), (right, bottom), (0, 0, 255), cv2.FILLED)
 
-        # Set the font and font scale
-        font = cv2.FONT_HERSHEY_SIMPLEX
-        name_res = name
-        cv2.putText(frame, name, (left + 6, bottom - 6), font, 1.0, (255, 255, 255), thickness=2)
+            # Set the font and font scale
+            font = cv2.FONT_HERSHEY_SIMPLEX
+            name_res = name
+            cv2.putText(frame, name, (left + 6, bottom - 6), font, 1.0, (255, 255, 255), thickness=2)
 
-    return name_res
-    # return frame
+        return name_res
+        # return frame
+    except:
+        return 'Unkown'
 
 # Define the video stream generator function
 def gen_frames():
     global load_frame
-    video_capture = cv2.VideoCapture(0)
-    while load_frame:
+    # video_capture = cv2.VideoCapture(0)
+    while True:
         # Read the video stream from the webcam
         success, frame = video_capture.read()
         # frame = predict(frame)
@@ -202,7 +206,7 @@ def admin():
     query = "select * from giaovien;"
     cursor.execute(query)
     gv = cursor.fetchall()
-    return render_template('views/admin/giaovien.html',giaoviens=gv,role=session['role'])
+    return render_template('views/admin/giaovien.html',numgiaovien=len(gv),giaoviens=gv,role=session['role'])
 
 @app.route('/cam',methods=['GET'])
 def cam():
@@ -218,17 +222,25 @@ def lophoc():
     query = "select * from lophoc;"
     cursor.execute(query)
     classes = cursor.fetchall()
-    return render_template('views/admin/classes.html',classes=classes,role=session['role'])
+    query = "select * from giaovien;"
+    cursor.execute(query)
+    gv = cursor.fetchall()
+    print(gv)
+    return render_template('views/admin/classes.html',classes=classes,giaoviens=gv,role=session['role'])
 
 @app.route('/admin/add_class',methods=['POST'])
 def add_lophoc():
     if 'user' not in session:
         return redirect(url_for('login'))
     classname = request.form['name']
+    giaovien = request.form['giaovien']
     try:
         conn = db.connect()
         cursor = conn.cursor()
         query = "insert into lophoc values(\'"+classname.upper()+"\');"
+        cursor.execute(query)
+        conn.commit()
+        query = "insert into lophoc_giaovien values(\'"+classname.upper()+"\',\'"+giaovien+"\');"
         cursor.execute(query)
         conn.commit()
     except:
@@ -303,10 +315,12 @@ def view_lophoc(id):
     query = "select * from hocsinh"
     cursor.execute(query)
     hocsinh = cursor.fetchall() 
-    print(hocsinh)
-    print('000000')
-    print(lh)
-    return render_template('views/classes.html',lophoc=lh,gv=gv,hs=hocsinh)
+    gvcn = ''
+    for x in gv:
+        for y in lh:
+            if x[0] == y[1]:
+                gvcn = x[1]
+    return render_template('views/classes.html',id=id,numclass=len(lh),classes=lh,gv=gv,hs=hocsinh,siso=len(lh),giaovienchunhhiem=gvcn)
     
 @app.route('/test')
 def test():
@@ -362,14 +376,55 @@ def add_giaovien():
     try:
         conn = db.connect()
         cursor = conn.cursor()
-        newimage = get_random_string(15)
-        newimage = '/static/uploads/teachers/'+newimage+'.'+image.filename.split('.')[1]
-        query = 'insert into giaovien values(\"'+code+'\",\"'+name+'\",\"'+newimage+'\",'+str(gender)+',\"'+birthday+'\",'+'\"'+password+'\"'+',0)'
+        randomname = get_random_string(15)
+        newimage = '/static/uploads/teachers/'+randomname+'.'+image.filename.split('.')[1]
+        query = 'insert into giaovien values(\"'+code+'\",\"'+name+'\",\"'+newimage+'\",'+str(gender)+',\"'+birthday+'\",'+'\"'+password+'\"'+',1)'
         print(query)   
         cursor.execute(query)
         conn.commit()
-        image.save('/static/uploads/teachers/'+newimage+'.'+image.filename.split('.')[1])
+        image.save('./static/uploads/teachers/'+randomname+'.'+image.filename.split('.')[1])
     except:
+        return redirect(url_for('admin'))
+    return redirect(url_for('admin'))
+
+@app.route('/admin/update_giaovien',methods=['POST'])
+def update_giaovien():
+    if 'user' not in session:
+        return redirect(url_for('login'))
+    if 'role' not in session:
+        return redirect(url_for('login'))
+    if session['role'] != 0:
+        return redirect(url_for('login'))
+    name = request.form['name1']
+    code = request.form['code1']
+    gender = 1
+    if request.form['gender1'] == 'female':
+        gender = 0
+    birthday = request.form['birthday1']
+    password = request.form['password1']
+    image = request.files['file1']
+    try:
+        if image.filename == '':
+            print('----------------------1')
+
+            conn = db.connect()
+            cursor = conn.cursor()
+            query = 'update giaovien set ten=\"'+name+'\", gioitinh='+str(gender)+', ngaysinh=\"'+birthday+'\",matkhau=\"'+password+'\" where id=\"'+code+'\" '
+            print(query)
+            cursor.execute(query)
+            conn.commit()
+        else:
+            conn = db.connect()
+            cursor = conn.cursor()
+            randomname = get_random_string(15)
+
+            newimage = '/static/uploads/teachers/'+randomname+'.'+image.filename.split('.')[1]
+            query = 'update giaovien set ten=\"'+name+'\",hinhanh=\"'+newimage+'\", gioitinh='+str(gender)+', ngaysinh=\"'+birthday+'\",matkhau=\"'+password+'\" where id=\"'+code+'\"'
+            cursor.execute(query)
+            conn.commit() 
+            image.save('./static/uploads/teachers/'+randomname+'.'+image.filename.split('.')[1])
+    except:
+        print('have error!')
         return redirect(url_for('admin'))
     return redirect(url_for('admin'))
 
@@ -380,10 +435,18 @@ def del_giaovien():
     id = request.form['id']
     conn = db.connect()
     cursor = conn.cursor()
-    query = 'delete from giaovien where id=\"'+id+"\";" 
+    query = 'select * from lophoc_giaovien where id_giaovien=\"'+id+"\";" 
     print(query)
     cursor.execute(query)
-    conn.commit()
+    gv = cursor.fetchall()
+    if len(gv) == 0:
+        query = 'delete from giaovien where id=\"'+id+"\";" 
+        print(query)
+        cursor.execute(query)
+        conn.commit()
+    else:
+        return redirect(url_for('admin'))
+
     return redirect(url_for('admin'))
 
 @app.route('/admin/teacher_class',methods=['GET'])
@@ -398,10 +461,11 @@ def teacher_class():
     query = 'SELECT * FROM lophoc'
     cursor.execute(query)
     lophoc = cursor.fetchall()
+    print(lophoc)
     query = 'SELECT * FROM giaovien'
     cursor.execute(query)
     giaovien = cursor.fetchall()
-    return render_template('views/admin/teacher_class.html',classes=lophoc_giaovien,lophoc_giaovien=lophoc,giaovien=giaovien,role=session['role'])
+    return render_template('views/admin/teacher_class.html',classes=lophoc,number_teacher_class=len(lophoc_giaovien),lophoc_giaovien=lophoc_giaovien,giaovien=giaovien,role=session['role'])
 
 @app.route('/admin/add_teacher_class',methods=['POST'])
 def add_teacher_class():
@@ -442,7 +506,7 @@ def add_phuhuynh():
 def add_phuhuynh_and_student(id):
     if 'user' not in session:
         return redirect(url_for('login'))
-    return render_template('views/admin/addphuhuynh.html',student=id,role=session['role'])
+    return render_template('views/admin/addphuhuynh.html',classes='',student=id,role=session['role'])
 
 @app.route('/admin/student',methods=['GET'])
 def student():
@@ -471,18 +535,18 @@ def add_student():
     birthday = request.form['birthday']
     image = request.files['file']
     print(image)
-    # try:
-    conn = db.connect()
-    cursor = conn.cursor()
-    newimage = get_random_string(15)
-    newimage = newimage+'.'+image.filename.split('.')[1]
-    query = 'insert into hocsinh(ten,hinhanh,gioitinh,ngaysinh) values(\"'+name+'\",\"'+newimage+'\",'+str(gender)+',\"'+birthday+'\")'
-    print(query)   
-    cursor.execute(query)
-    conn.commit()
-    image.save(os.path.join(app.config['UPLOAD_FOLDER'],newimage))
-    # except:
-        # return redirect(url_for('student'))
+    try:
+        conn = db.connect()
+        cursor = conn.cursor()
+        randomname = get_random_string(15)
+        newimage = randomname+'.'+image.filename.split('.')[1]
+        query = 'insert into hocsinh(ten,hinhanh,gioitinh,ngaysinh) values(\"'+name+'\",\"'+newimage+'\",'+str(gender)+',\"'+birthday+'\")'
+        print(query)   
+        cursor.execute(query)
+        conn.commit()
+        image.save('./'+randomname+'.'+image.filename.split('.')[1])
+    except:
+        return redirect(url_for('student'))
     return redirect(url_for('student'))
 
 @app.route('/admin/del_student',methods=['POST'])
@@ -560,15 +624,19 @@ def video_feed():
     return Response(gen_frames(), mimetype='multipart/x-mixed-replace; boundary=frame')
 
 def pred(frame):
+    data = predict(frame)
+    print('data; ',data)
+    if data == 'Unknown':
+        yield "data: {}\n\n".format('Unknown')
+    else:
+        yield "data: {}\n\n".format(data) 
 
-    yield "data: {}\n\n".format(predict(frame)) 
-
-video_capture1 = cv2.VideoCapture(0)
+# video_capture1 = cv2.VideoCapture(0)
 @app.route("/face_detection")
 def face_regco():
 
     while load_frame:
-        success, frame = video_capture1.read()
+        success, frame = video_capture.read()
         try:
             return Response(pred(frame), mimetype="text/event-stream")
         except TypeError:

@@ -68,6 +68,15 @@
             <label>Tên</label>
             <input type="text" class="form-control" name="name" />
           </div>
+          <div class="form-group">
+            <label for="giaovien">Giáo viên:</label>
+            <select class="form-control" id="giaovien" name="giaovien">
+              {% for x in giaoviens %}
+                <option value={{x[0]}}>{{x[1]}}</option>
+              
+              {% endfor %}
+            </select>
+          </div>
         <div class="modal-footer">
           <input
             type="button"
