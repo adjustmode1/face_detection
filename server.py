@@ -525,6 +525,12 @@ def student():
     cursor.execute(query)
     phuhuynh_hocsinh = cursor.fetchall()
     
+    print('hocs---')
+    print(hocsinh)
+    print('phun---')
+    print(phuhuynh)
+    print('phun-hs---')
+    print(phuhuynh_hocsinh)
     return render_template('views/admin/student.html',hocsinh=hocsinh,phuhuynh_hocsinh=phuhuynh_hocsinh,phuhuynh=phuhuynh,role=session['role'])
 
 @app.route('/admin/add_student',methods=['POST'])

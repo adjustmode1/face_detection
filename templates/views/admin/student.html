@@ -20,6 +20,7 @@
               <th>Giới tính</th>
               <th>Ngày sinh</th>
               <th>Địa chỉ</th>
+              <th>Control</th>
             </tr>
           </thead>
           <tbody>
@@ -38,12 +39,12 @@
                   {%for y in phuhuynh_hocsinh%}
                       {%if x[0] == y[1] %}
                         {%for z in phuhuynh%}
-                            {%if z[0] == y[1]%}
-                              <a href={{'#viewEmployeeModal'+z[0]}} class="view" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="View">&#xe8f4;</i></a>
-                              <div id="viewEmployeeModal" class="modal fade">
+                            {%if z[0] == y[0]%}
+                              <a href={{'#viewEmployeeModal'+z[0]}} class="view" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Update">&#xe8f4;</i></a>
+                              <div id={{'viewEmployeeModal'+z[0]}} class="modal fade">
                                 <div class="modal-dialog">
                                   <div class="modal-content">
-                                    <form id="user-form" method="POST" action="/admin/add_student" enctype="multipart/form-data">
+                                    <form id="user-form">
                                       <div class="modal-header">
                                         <h4 class="modal-title">Thông tin phụ huynh</h4>
                                         <a href="">&times;</a>
@@ -51,23 +52,32 @@
                                       <div class="modal-body">
                                         <div class="form-group">
                                           <label>Hình ảnh:</label>
-                                          <input type="file" name='file' class="form-control" />
+                                          <img src={{z[2]}} width="200" height="200"/>
                                         </div>
                                         <div class="form-group">
                                           <label>Tên</label>
-                                          <input type="text" name='name' class="form-control" value={{z[1]}} required/>
+                                          <input type="text" name='name' class="form-control" value={{z[1]}} disabled required/>
+                                        </div>
+                                        <div class="form-group">
+                                          <label>Số diện thoại</label>
+                                          <input type="text" name='name' class="form-control" value={{z[4]}} disabled required/>
+                                        </div>
+                                        <div class="form-group">
+                                          <label>Địa chỉ</label>
+                                          <input type="text" name='name' class="form-control" value={{z[6]}} disabled required/>
+                                        </div>
+                                        <div class="form-group">
+                                          <label>Giới tính</label>
+                                          <input type="text" name='name' class="form-control" value={% if z[3] == 1 %}
+                                          nam
+                                        {% endif %}
+                                        {% if z[3] == 0 %}
+                                          nữ
+                                        {% endif %} disabled required/>
                                         </div>
                                         <div class="form-group">
                                           <label>Năm sinh</label>
-                                          <input type="date" name='birthday' class="form-control" value={{z[2]}} required/>
-                                        </div>
-                                        <div class="form-group">
-                                          <label for="gender">Gender:</label>
-                                          <select class="form-control" id="gender" name="gender">
-                                            <option value="">Select Gender</option>
-                                            <option value="male">Male</option>
-                                            <option value="female">Female</option>
-                                          </select>
+                                          <input type="date" name='birthday' class="form-control" value={{z[5]}} disabled required/>
                                         </div>
                                       </div>
                                       <div class="modal-footer">
