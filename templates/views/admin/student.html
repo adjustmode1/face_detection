@@ -35,6 +35,49 @@
               <td>
                 <td>
                   <a href={{'#deleteEmployeeModal'+x[1]}} class="delete" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Delete">&#xE872;</i></a>
+                  <a href={{'#viewEmployeeModal'+x[1]}} class="view" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Delete">&#xe8f4;</i></a>
+                  <div id="viewEmployeeModal" class="modal fade">
+                    <div class="modal-dialog">
+                      <div class="modal-content">
+                        <form id="user-form" method="POST" action="/admin/add_student" enctype="multipart/form-data">
+                          <div class="modal-header">
+                            <h4 class="modal-title">Thông tin phụ huynh</h4>
+                            <a href="">&times;</a>
+                          </div>
+                          <div class="modal-body">
+                            <div class="form-group">
+                              <label>Hình ảnh:</label>
+                              <input type="file" name='file' class="form-control" />
+                            </div>
+                            <div class="form-group">
+                              <label>Tên</label>
+                              <input type="text" name='name' class="form-control" required/>
+                            </div>
+                            <div class="form-group">
+                              <label>Năm sinh</label>
+                              <input type="date" name='birthday' class="form-control" required/>
+                            </div>
+                            <div class="form-group">
+                              <label for="gender">Gender:</label>
+                              <select class="form-control" id="gender" name="gender">
+                                <option value="">Select Gender</option>
+                                <option value="male">Male</option>
+                                <option value="female">Female</option>
+                              </select>
+                            </div>
+                          </div>
+                          <div class="modal-footer">
+                            <input
+                              type="button"
+                              class="btn btn-success"
+                              data-dismiss="modal"
+                              value="Cancel"
+                            />
+                          </div>
+                        </form>
+                      </div>
+                    </div>
+                  </div>
                   <div id={{'deleteEmployeeModal'+x[1]}} class="modal fade">
                       <div class="modal-dialog">
                           <div class="modal-content">

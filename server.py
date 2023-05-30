@@ -405,7 +405,6 @@ def update_giaovien():
     image = request.files['file1']
     try:
         if image.filename == '':
-            print('----------------------1')
 
             conn = db.connect()
             cursor = conn.cursor()
@@ -517,8 +516,16 @@ def student():
     query = 'select * from hocsinh' 
     cursor.execute(query)
     hocsinh = cursor.fetchall()
-    print(hocsinh)
-    return render_template('views/admin/student.html',hocsinh=hocsinh,role=session['role'])
+    
+    query = 'select * from phuhuynh' 
+    cursor.execute(query)
+    phuhuynh = cursor.fetchall()
+
+    query = 'select * from phuhuynh_hocsinh' 
+    cursor.execute(query)
+    phuhuynh_hocsinh = cursor.fetchall()
+    
+    return render_template('views/admin/student.html',hocsinh=hocsinh,phuhuynh_hocsinh=phuhuynh_hocsinh,phuhuynh=phuhuynh,role=session['role'])
 
 @app.route('/admin/add_student',methods=['POST'])
 def add_student():
