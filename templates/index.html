@@ -14,7 +14,7 @@
                   </button>
                   <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                     {%
-                      for cl in classes
+                      for cl in classes_show
                     %}
                       <a class="dropdown-item" href={{"/classes/"+cl[0]}}>Lớp {{cl[0]}}</a>
                     {%endfor%}

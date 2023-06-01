@@ -185,7 +185,7 @@ def index():
     cursor.execute(query)
     cl = cursor.fetchall()
     print(cl)
-    return render_template('introdution.html',classes=cl)
+    return render_template('introdution.html',classes_show=cl)
 # Define the route for the index page
 
 @app.route('/predict')
@@ -309,6 +309,9 @@ def view_lophoc(id):
     query = "select * from lophoc_hocsinh where id_lophoc=\'"+id+"\';"
     cursor.execute(query)
     lh = cursor.fetchall()
+    query = "select * from lophoc;"
+    cursor.execute(query)
+    classes = cursor.fetchall()
     query = "select * from giaovien"
     cursor.execute(query)
     gv = cursor.fetchall()    
@@ -320,7 +323,7 @@ def view_lophoc(id):
         for y in lh:
             if x[0] == y[1]:
                 gvcn = x[1]
-    return render_template('views/classes.html',id=id,numclass=len(lh),classes=lh,gv=gv,hs=hocsinh,siso=len(lh),giaovienchunhhiem=gvcn)
+    return render_template('views/classes.html',id=id,numclass=len(lh),classes_show=classes,classes=lh,gv=gv,hs=hocsinh,siso=len(lh),giaovienchunhhiem=gvcn)
     
 @app.route('/test')
 def test():
