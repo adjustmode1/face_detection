@@ -36,66 +36,56 @@
               <td>
                 <td>
                   <a href={{'#deleteEmployeeModal'+x[1]}} class="delete" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Delete">&#xE872;</i></a>
-                  {%for y in phuhuynh_hocsinh%}
-                      {%if x[0] == y[1] %}
-                        {%for z in phuhuynh%}
-                            {%if z[0] == y[0]%}
-                              <a href={{'#viewEmployeeModal'+z[0]}} class="view" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Update">&#xe8f4;</i></a>
-                              <div id={{'viewEmployeeModal'+z[0]}} class="modal fade">
-                                <div class="modal-dialog">
-                                  <div class="modal-content">
-                                    <form id="user-form">
-                                      <div class="modal-header">
-                                        <h4 class="modal-title">Thông tin phụ huynh</h4>
-                                        <a href="">&times;</a>
-                                      </div>
-                                      <div class="modal-body">
-                                        <div class="form-group">
-                                          <label>Hình ảnh:</label>
-                                          <img src={{z[2]}} width="200" height="200"/>
-                                        </div>
-                                        <div class="form-group">
-                                          <label>Tên</label>
-                                          <input type="text" name='name' class="form-control" value={{z[1]}} disabled required/>
-                                        </div>
-                                        <div class="form-group">
-                                          <label>Số diện thoại</label>
-                                          <input type="text" name='name' class="form-control" value={{z[4]}} disabled required/>
-                                        </div>
-                                        <div class="form-group">
-                                          <label>Địa chỉ</label>
-                                          <input type="text" name='name' class="form-control" value={{z[6]}} disabled required/>
-                                        </div>
-                                        <div class="form-group">
-                                          <label>Giới tính</label>
-                                          <input type="text" name='name' class="form-control" value={% if z[3] == 1 %}
-                                          nam
-                                        {% endif %}
-                                        {% if z[3] == 0 %}
-                                          nữ
-                                        {% endif %} disabled required/>
-                                        </div>
-                                        <div class="form-group">
-                                          <label>Năm sinh</label>
-                                          <input type="date" name='birthday' class="form-control" value={{z[5]}} disabled required/>
-                                        </div>
-                                      </div>
-                                      <div class="modal-footer">
-                                        <input
-                                          type="button"
-                                          class="btn btn-success"
-                                          data-dismiss="modal"
-                                          value="Cancel"
-                                        />
-                                      </div>
-                                    </form>
-                                  </div>
-                                </div>
-                              </div>
-                            {%endif%}
-                        {%endfor%}
-                      {%endif%}
-                  {%endfor%}
+                  <a href={{'#viewEmployeeModal'+x[1]}} class="view" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Update">&#xe8f4;</i></a>
+                  <div id={{'viewEmployeeModal'+x[1]}} class="modal fade">
+                    <div class="modal-dialog">
+                      <div class="model-body">
+                          <table class="table">
+                            <thead>
+                              <tr>
+                                <th>Ảnh</th>
+                                <th>Tên</th>
+                                <th>Số điện thoại</th>
+                                <th>Địa chỉ</th>
+                                <th>Giới tính</th>
+                                <th>Ngày sinh</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {%for y in phuhuynh_hocsinh%}
+                              {%if x[0] == y[1] %}
+                              {%for z in phuhuynh%}
+                                {%if z[0] == y[0]%}
+                                <tr>
+                                  <td>
+                                    <img src={{z[2]}} width="200" height="200"/>
+                                  </td>
+                                  <td>{{z[1]}}</td>
+                                  <td>{{z[4]}}</td>
+                                  <td>{{z[6]}}</td>
+                                  <td>
+                                    {% if z[3] == 1 %}
+                                    nam
+                                    {% endif %}
+                                    {% if z[3] == 0 %}
+                                    nữ
+                                    {% endif %}
+                                  </td>
+                                  <td>{{z[5]}}</td>
+                                </tr>
+                                {%endif%}
+                              {%endfor%}
+                              {%endif%}
+                              {%endfor%}
+                            </tbody>
+                          </table>
+                        </div>
+                        <div class="modal-footer">
+                          <input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel">
+                        </div>
+                    </div>
+
+                  </div>
                   <div id={{'deleteEmployeeModal'+x[1]}} class="modal fade">
                       <div class="modal-dialog">
                           <div class="modal-content">
