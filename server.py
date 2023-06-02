@@ -226,7 +226,7 @@ def lophoc():
     cursor.execute(query)
     gv = cursor.fetchall()
     print(gv)
-    return render_template('views/admin/classes.html',classes=classes,giaoviens=gv,role=session['role'])
+    return render_template('views/admin/classes.html',num_classes=len(classes),classes=classes,giaoviens=gv,role=session['role'])
 
 @app.route('/admin/add_class',methods=['POST'])
 def add_lophoc():
