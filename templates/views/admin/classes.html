@@ -24,7 +24,7 @@
       <tbody>
         {% for x in range(num_classes) %}
         <tr>
-          <td>{{x}}</td>
+          <td>{{x+1}}</td>
           <td>{{classes[x][0]}}</td>
           <td>
                 <a href={{'#deleteEmployeeModal'+classes[x][0]}} class="delete" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Delete">&#xE872;</i></a>

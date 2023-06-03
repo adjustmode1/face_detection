@@ -272,7 +272,7 @@ def phuhuynh():
     query = "select * from phuhuynh;"
     cursor.execute(query)
     ph = cursor.fetchall()
-    return render_template('views/admin/phuhuynh.html',phuhuynhs=ph,role=session['role'])
+    return render_template('views/admin/phuhuynh.html',num_phuhuynh=len(ph),phuhuynhs=ph,role=session['role'])
 
 @app.route('/admin/quanly_class',methods=['GET'])
 def quanly_class():
@@ -534,7 +534,7 @@ def student():
     print(phuhuynh)
     print('phun-hs---')
     print(phuhuynh_hocsinh)
-    return render_template('views/admin/student.html',hocsinh=hocsinh,phuhuynh_hocsinh=phuhuynh_hocsinh,phuhuynh=phuhuynh,role=session['role'])
+    return render_template('views/admin/student.html',num_student=len(hocsinh),hocsinh=hocsinh,phuhuynh_hocsinh=phuhuynh_hocsinh,phuhuynh=phuhuynh,role=session['role'])
 
 @app.route('/admin/add_student',methods=['POST'])
 def add_student():

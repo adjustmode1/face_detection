@@ -15,6 +15,7 @@
         <table class="table table-striped table-hover">
           <thead>
             <tr>
+              <th>STT</th>
               <th>Tên</th>
               <th>Ảnh</th>
               <th>Giới tính</th>
@@ -24,25 +25,27 @@
             </tr>
           </thead>
           <tbody>
-            {% for x in hocsinh %}
+            {% for x in range(num_student) %}
             <tr style="cursor:pointer">
-              <td onClick="phuhuynh({{x[0]}})" >{{x[1]}}</td>
-              <td onClick="phuhuynh({{x[0]}})" ><img src="/{{x[2]}}" width="50%"/></td>
-              <td onClick="phuhuynh({{x[0]}})" >
-                {% if x[3] == 1 %} nam {%endif%} {% if x[3] == 0 %} nữ {%endif%}
-                {% if x[3] == 2 %} khác {%endif%}
+              <td onClick="phuhuynh({{hocsinh[x][0]}})" >{{x+1}}</td>
+              <td onClick="phuhuynh({{hocsinh[x][0]}})" >{{hocsinh[x][1]}}</td>
+              <td onClick="phuhuynh({{hocsinh[x][0]}})" ><img src="/{{hocsinh[x][2]}}" width="50%"/></td>
+              <td onClick="phuhuynh({{hocsinh[x][0]}})" >
+                {% if hocsinh[x][3] == 1 %} nam {%endif%} {% if hocsinh[x][3] == 0 %} nữ {%endif%}
+                {% if hocsinh[x][3] == 2 %} khác {%endif%}
               </td>
               <td onClick="phuhuynh({{x[0]}})" >{{x[4]}}</td>
               <td>
                 <td>
-                  <a href={{'#deleteEmployeeModal'+x[1]}} class="delete" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Delete">&#xE872;</i></a>
-                  <a href={{'#viewEmployeeModal'+x[1]}} class="view" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Update">&#xe8f4;</i></a>
-                  <div id={{'viewEmployeeModal'+x[1]}} class="modal fade">
+                  <a href={{'#deleteEmployeeModal'+hocsinh[x][1]}} class="delete" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Delete">&#xE872;</i></a>
+                  <a href={{'#viewEmployeeModal'+hocsinh[x][1]}} class="view" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Update">&#xe8f4;</i></a>
+                  <div id={{'viewEmployeeModal'+hocsinh[x][1]}} class="modal fade">
                     <div class="modal-dialog">
                       <div class="model-body">
-                          <table class="table">
+                          <table class="">
                             <thead>
                               <tr>
+                                <th>STT</th>
                                 <th>Ảnh</th>
                                 <th>Tên</th>
                                 <th>Số điện thoại</th>
@@ -52,13 +55,14 @@
                               </tr>
                             </thead>
                             <tbody>
-                              {%for y in phuhuynh_hocsinh%}
-                              {%if x[0] == y[1] %}
+                              {%for y in range(phuhuynh_hocsinh|length)%}
+                              {%if hocsinh[x][0] == phuhuynh_hocsinh[y][1] %}
                               {%for z in phuhuynh%}
-                                {%if z[0] == y[0]%}
-                                <tr>
+                                {%if z[0] == phuhuynh_hocsinh[y][0]%}
+                                <tr style="background-color:white">
+                                  <td>{{y+1}}</td>
                                   <td>
-                                    <img src={{z[2]}} width="200" height="200"/>
+                                    <img src="/{{z[2]}}" width="200" height="200"/>
                                   </td>
                                   <td>{{z[1]}}</td>
                                   <td>{{z[4]}}</td>
@@ -79,14 +83,14 @@
                               {%endfor%}
                             </tbody>
                           </table>
-                        </div>
-                        <div class="modal-footer">
-                          <input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel">
+                          <div class="modal-footer">
+                            <input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel">
+                          </div>
                         </div>
                     </div>
 
                   </div>
-                  <div id={{'deleteEmployeeModal'+x[1]}} class="modal fade">
+                  <div id={{'deleteEmployeeModal'+hocsinh[x][1]}} class="modal fade">
                       <div class="modal-dialog">
                           <div class="modal-content">
                               <form action='/admin/del_student' method="post">

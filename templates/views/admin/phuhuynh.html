@@ -18,27 +18,32 @@
         <table class="table table-striped table-hover">
           <thead>
             <tr>
+              <th>STT</th>
               <th>Tên</th>
               <th>Ảnh</th>
               <th>Giới tính</th>
+              <th>Số điện thoại</th>
               <th>Ngày sinh</th>
               <th>Địa chỉ</th>
             </tr>
           </thead>
           <tbody>
-            {% for x in phuhuynhs %}
+            {% for x in range(num_phuhuynh) %}
             <tr>
-              <td>{{x[1]}}</td>
-              <td><img src="/{{x[2]}}" width="50%"/></td>
+              <td>{{x+1}}</td>
+              <td>{{phuhuynhs[x][1]}}</td>
+              <td><img src="/{{phuhuynhs[x][2]}}" width="50%"/></td>
               <td>
-                {% if x[3] == 1 %} nam {%endif%} {% if x[3] == 0 %} nữ {%endif%}
-                {% if x[3] == 2 %} khác {%endif%}
+                {% if phuhuynhs[x][3] == 1 %} nam {%endif%} {% if phuhuynhs[x][3] == 0 %} nữ {%endif%}
+                {% if phuhuynhs[x][3] == 2 %} khác {%endif%}
               </td>
-              <td>{{x[4]}}</td>
+              <td>{{phuhuynhs[x][4]}}</td>
+              <td>{{phuhuynhs[x][5]}}</td>
+              <td>{{phuhuynhs[x][6]}}</td>
               <td>
                 <td>
-                  <a href={{'#deleteEmployeeModal'+x[0]}} class="delete" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Delete">&#xE872;</i></a>
-                  <div id={{'deleteEmployeeModal'+x[0]}} class="modal fade">
+                  <a href={{'#deleteEmployeeModal'+phuhuynhs[x][0]}} class="delete" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Delete">&#xE872;</i></a>
+                  <div id={{'deleteEmployeeModal'+phuhuynhs[x][0]}} class="modal fade">
                       <div class="modal-dialog">
                           <div class="modal-content">
                               <form action='/admin/del_phuhuynh' method="post">
