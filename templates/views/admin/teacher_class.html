@@ -26,11 +26,11 @@
         {% for index in range(number_teacher_class) %}
         <tr>
           <td>{{index+1}}</td>
-          <td>{{classes[index][0]}}</td>
+          <td>{{lophoc_giaovien[index][0]}}</td>
           <td>
             {% for x in lophoc_giaovien %}
               {% for y in giaovien %}
-                {% if x[1] == y[0] and x[0] == classes[index][0]%}
+                {% if x[1] == y[0] and x[0] == lophoc_giaovien[index][0]%}
                   {{y[1]}}
                 {% endif %}
               {% endfor %}
@@ -38,8 +38,8 @@
             {% endfor %}
             </td>
           <td>
-                <a href={{'#deleteEmployeeModal'+classes[index][0]}} class="delete" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Delete">&#xE872;</i></a>
-                <div id={{'deleteEmployeeModal'+classes[index][0]}} class="modal fade">
+                <a href={{'#deleteEmployeeModal'+lophoc_giaovien[index][0]}} class="delete" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Delete">&#xE872;</i></a>
+                <div id={{'deleteEmployeeModal'+lophoc_giaovien[index][0]}} class="modal fade">
                     <div class="modal-dialog">
                         <div class="modal-content">
                             <form action='/admin/del_teacher_class' method="post">
@@ -50,8 +50,8 @@
                                 <div class="modal-body">					
                                     <p>Bạn có muốn xóa không?</p>
                                 </div>
-                                <input name="class" value={{classes[index][0]}} hidden/>
-                                <input name="teacher" value={{classes[index][1]}} hidden/>
+                                <input name="class" value={{lophoc_giaovien[index][0]}} hidden/>
+                                <input name="teacher" value={{lophoc_giaovien[index][1]}} hidden/>
                                 <div class="modal-footer">
                                     <input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel">
                                     <input type="submit" class="btn btn-danger" value="Delete">
