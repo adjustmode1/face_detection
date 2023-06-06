@@ -229,7 +229,7 @@ def lophoc():
     cursor.execute(query)
     lophocgiaovien = cursor.fetchall()
     print(gv)
-    return render_template('views/admin/classes.html',num_classes=len(classes),lophocgiaovien=lophocgiaovien,classes=classes,giaoviens=gv,role=session['role'])
+    return render_template('views/admin/classes.html',session_giaovien=session['user'],num_classes=len(classes),lophocgiaovien=lophocgiaovien,classes=classes,giaoviens=gv,role=session['role'])
 
 @app.route('/admin/add_class',methods=['POST'])
 def add_lophoc():
@@ -286,14 +286,14 @@ def quanly_class():
     query = "select * from lophoc_hocsinh where id_giaovien=\'"+session['user']+"\'"
     cursor.execute(query)
     lophoc_hocsinh = cursor.fetchall()
-    print(lophoc_hocsinh)
+
     query = "select * from hocsinh;"
     cursor.execute(query)
     hocsinh = cursor.fetchall()
     query = "select * from giaovien"
     cursor.execute(query)
     giaovien = cursor.fetchall()
-    return render_template('views/admin/student_class.html',classes=lophoc_hocsinh,role=session['role'])
+    return render_template('views/admin/student_class.html',num_student=len(lophoc_hocsinh),hocsinh=hocsinh,classes=lophoc_hocsinh,role=session['role'])
 
 @app.route('/classes',methods=['GET'])
 def classes():
@@ -530,14 +530,8 @@ def student():
     query = 'select * from phuhuynh_hocsinh' 
     cursor.execute(query)
     phuhuynh_hocsinh = cursor.fetchall()
-    
-    print('hocs---')
-    print(hocsinh)
-    print('phun---')
-    print(phuhuynh)
-    print('phun-hs---')
-    print(phuhuynh_hocsinh)
-    return render_template('views/admin/student.html',num_student=len(hocsinh),hocsinh=hocsinh,phuhuynh_hocsinh=phuhuynh_hocsinh,phuhuynh=phuhuynh,role=session['role'])
+
+    return render_template('views/admin/student.html',num_student=len(hocsinh),hocsinh=hocsinh,phuhuynh_hocsinh=phuhuynh_hocsinh,phuhuynh=phuhuynh,session_giaovien=session['user'],role=session['role'])
 
 @app.route('/admin/add_student',methods=['POST'])
 def add_student():
