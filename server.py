@@ -225,8 +225,11 @@ def lophoc():
     query = "select * from giaovien;"
     cursor.execute(query)
     gv = cursor.fetchall()
+    query = "select * from lophoc_giaovien;"
+    cursor.execute(query)
+    lophocgiaovien = cursor.fetchall()
     print(gv)
-    return render_template('views/admin/classes.html',num_classes=len(classes),classes=classes,giaoviens=gv,role=session['role'])
+    return render_template('views/admin/classes.html',num_classes=len(classes),lophocgiaovien=lophocgiaovien,classes=classes,giaoviens=gv,role=session['role'])
 
 @app.route('/admin/add_class',methods=['POST'])
 def add_lophoc():
@@ -550,19 +553,18 @@ def add_student():
         gender = 0
     birthday = request.form['birthday']
     image = request.files['file']
-    print(image)
-    try:
-        conn = db.connect()
-        cursor = conn.cursor()
-        randomname = get_random_string(15)
-        newimage = randomname+'.'+image.filename.split('.')[1]
-        query = 'insert into hocsinh(ten,hinhanh,gioitinh,ngaysinh) values(\"'+name+'\",\"'+newimage+'\",'+str(gender)+',\"'+birthday+'\")'
-        print(query)   
-        cursor.execute(query)
-        conn.commit()
-        image.save('./'+randomname+'.'+image.filename.split('.')[1])
-    except:
-        return redirect(url_for('student'))
+    # try:
+    conn = db.connect()
+    cursor = conn.cursor()
+    randomname = get_random_string(15)
+    newimage = '/static/uploads/'+randomname+'.'+image.filename.split('.')[1]
+    query = 'insert into hocsinh(ten,hinhanh,gioitinh,ngaysinh) values(\"'+name+'\",\"'+newimage+'\",'+str(gender)+',\"'+birthday+'\")'
+    print(query)   
+    cursor.execute(query)
+    conn.commit()
+    image.save('static/uploads/'+randomname+'.'+image.filename.split('.')[1])
+    # except:
+        # return redirect(url_for('student'))
     return redirect(url_for('student'))
 
 @app.route('/admin/del_student',methods=['POST'])

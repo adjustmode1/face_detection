@@ -20,7 +20,6 @@
               <th>Ảnh</th>
               <th>Giới tính</th>
               <th>Ngày sinh</th>
-              <th>Địa chỉ</th>
               <th>Control</th>
             </tr>
           </thead>
@@ -29,16 +28,15 @@
             <tr style="cursor:pointer">
               <td onClick="phuhuynh({{hocsinh[x][0]}})" >{{x+1}}</td>
               <td onClick="phuhuynh({{hocsinh[x][0]}})" >{{hocsinh[x][1]}}</td>
-              <td onClick="phuhuynh({{hocsinh[x][0]}})" ><img src="/{{hocsinh[x][2]}}" width="50%"/></td>
+              <td onClick="phuhuynh({{hocsinh[x][0]}})" ><img src="{{hocsinh[x][2]}}" width="50%"/></td>
               <td onClick="phuhuynh({{hocsinh[x][0]}})" >
                 {% if hocsinh[x][3] == 1 %} nam {%endif%} {% if hocsinh[x][3] == 0 %} nữ {%endif%}
                 {% if hocsinh[x][3] == 2 %} khác {%endif%}
               </td>
-              <td onClick="phuhuynh({{x[0]}})" >{{x[4]}}</td>
+              <td onClick="phuhuynh({{x[0]}})" >{{hocsinh[x][4]}}</td>
               <td>
-                <td>
                   <a href={{'#deleteEmployeeModal'+hocsinh[x][1]}} class="delete" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Delete">&#xE872;</i></a>
-                  <a href={{'#viewEmployeeModal'+hocsinh[x][1]}} class="view" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Update">&#xe8f4;</i></a>
+                  <a href={{'#viewEmployeeModal'+hocsinh[x][1]}} class="view" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="View">&#xe8f4;</i></a>
                   <div id={{'viewEmployeeModal'+hocsinh[x][1]}} class="modal fade">
                     <div class="modal-dialog">
                       <div class="model-body">
@@ -101,7 +99,7 @@
                                   <div class="modal-body">					
                                       <p>Bạn có muốn xóa không!</p>
                                   </div>
-                                  <input name="id" value={{x[0]}} hidden/>
+                                  <input name="id" value='{{hocsinh[x][0]}}' hidden />
                                   <div class="modal-footer">
                                       <input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel">
                                       <input type="submit" class="btn btn-danger" value="Delete">
