@@ -231,6 +231,33 @@ def lophoc():
     print(gv)
     return render_template('views/admin/classes.html',session_giaovien=session['user'],num_classes=len(classes),lophocgiaovien=lophocgiaovien,classes=classes,giaoviens=gv,role=session['role'])
 
+@app.route('/admin/update_class',methods=['POST'])
+def update_lophoc():
+    if 'user' not in session:
+        return redirect(url_for('login'))
+    
+    name = request.form['name']
+    id = request.form['id']
+    giaovien = request.form['giaovien']
+
+    print('000000000000000')
+    print(id)
+    print(name)
+    print(giaovien)
+    conn = db.connect()
+    cursor = conn.cursor()
+    query = 'update lophoc set name=\"'+name+'\" where id='+id
+    cursor.execute(query)
+    conn.commit()
+
+    query = 'update lophoc_giaovien set id_giaovien=\"'+giaovien+'\" where id_lophoc='+id
+    cursor.execute(query)
+    conn.commit()
+
+    return redirect('/admin/classes')
+    # return render_template('views/admin/classes.html',session_giaovien=session['user'],num_classes=len(classes),lophocgiaovien=lophocgiaovien,classes=classes,giaoviens=gv,role=session['role'])
+
+
 @app.route('/admin/add_class',methods=['POST'])
 def add_lophoc():
     if 'user' not in session:
@@ -294,6 +321,43 @@ def quanly_class():
     cursor.execute(query)
     giaovien = cursor.fetchall()
     return render_template('views/admin/student_class.html',num_student=len(lophoc_hocsinh),hocsinh=hocsinh,classes=lophoc_hocsinh,role=session['role'])
+
+@app.route('/admin/update_student_class',methods=['POST'])
+def update_student_class():
+    if 'user' not in session:
+        return redirect(url_for('login'))
+
+    id = request.form['id']
+    name = request.form['name']
+    gender = 1
+    if request.form['gender'] == 'female':
+        gender = 0
+    birthday = request.form['birthday']
+    image = request.files['file']
+
+    try:
+        if image.filename == '':
+
+            conn = db.connect()
+            cursor = conn.cursor()
+            query = 'update hocsinh set ten=\"'+name+'\", gioitinh='+str(gender)+', ngaysinh=\"'+birthday+'\"'+' where id=\"'+id+'\" '
+            print(query)
+            cursor.execute(query)
+            conn.commit()
+        else:
+            conn = db.connect()
+            cursor = conn.cursor()
+            randomname = get_random_string(15)
+
+            newimage = '/static/uploads/'+randomname+'.'+image.filename.split('.')[1]
+            query = 'update hocsinh set ten=\"'+name+'\",hinhanh=\"'+newimage+'\", gioitinh='+str(gender)+', ngaysinh=\"'+birthday+'\" where id=\"'+id+'\"'
+            cursor.execute(query)
+            conn.commit() 
+            image.save('/static/uploads/'+randomname+'.'+image.filename.split('.')[1])
+    except:
+        print('have error!')
+        return redirect('/admin/quanly_class')
+    return redirect('/admin/quanly_class')
 
 @app.route('/classes',methods=['GET'])
 def classes():
