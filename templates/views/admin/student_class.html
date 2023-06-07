@@ -35,9 +35,9 @@
               </td>
               <td onClick="phuhuynh({{x[0]}})" >{{hocsinh[x][4]}}</td>
               <td>
-                  <a href={{'#deleteEmployeeModal'+hocsinh[x][1]}} class="delete" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Delete">&#xE872;</i></a>
-                  <a href={{'#viewEmployeeModal'+hocsinh[x][1]}} class="view" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="View">&#xe8f4;</i></a>
-                  <div id={{'viewEmployeeModal'+hocsinh[x][1]}} class="modal fade">
+                  <a href={{'#deleteEmployeeModal'+hocsinh[x][0]|string}} class="delete" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Delete">&#xE872;</i></a>
+                  <a href={{'#viewEmployeeModal'+hocsinh[x][0]|string}} class="view" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="View">&#xe8f4;</i></a>
+                  <div id={{'viewEmployeeModal'+hocsinh[x][0]|string}} class="modal fade">
                     <div class="modal-dialog">
                       <div class="model-body">
                           <table class="">
@@ -203,9 +203,23 @@
               <div class="form-group">
                 <label for="gender">Gender:</label>
                 <select class="form-control" id="gender" name="gender">
-                  <option value="">Select Gender</option>
-                  <option value="male">Male</option>
-                  <option value="female">Female</option>
+                  <option value="">chọn giới tính</option>
+                  <option value="male">Nam</option>
+                  <option value="female">Nữ</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="lop">lớp học:</label>
+                <select class="form-control" id="lop" name="lop">
+                  <option value="">chọn lớp học</option>
+                  {% for lh_gv in  lophoc_giaovien%}
+                    {% for lh in lophoc %}
+                      {% if lh[0] == lh_gv[0] %}
+                        <option value='{{lh[0]}}'>{{lh[1]}}</option>
+                      {% endif %}
+                    {% endfor %}
+                  {% endfor %}
+
                 </select>
               </div>
             </div>

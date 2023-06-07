@@ -267,13 +267,24 @@ def add_lophoc():
     try:
         conn = db.connect()
         cursor = conn.cursor()
-        query = "insert into lophoc values(\'"+classname.upper()+"\');"
+        query = "insert into lophoc(name) values(\'"+classname.upper()+"\');"
         cursor.execute(query)
         conn.commit()
-        query = "insert into lophoc_giaovien values(\'"+classname.upper()+"\',\'"+giaovien+"\');"
+
+        query = "select * from lophoc where name=\'"+classname.upper()+"\';"
+        cursor.execute(query)
+        lophoc = cursor.fetchone()
+
+        print('lophoc: --------')
+        print(lophoc)
+        print('id lơp: ',lophoc[0])
+        query = "insert into lophoc_giaovien(id_lophoc,id_giaovien) values(\'"+str(lophoc[0])+"\',\'"+giaovien+"\');"
+        print('-------------')
+        print(query)
         cursor.execute(query)
         conn.commit()
     except:
+        print('have erro')
         return redirect('/admin/classes')
     return redirect('/admin/classes')
 
@@ -314,13 +325,32 @@ def quanly_class():
     cursor.execute(query)
     lophoc_hocsinh = cursor.fetchall()
 
+    query = "select * from phuhuynh_hocsinh"
+    cursor.execute(query)
+    phuhuynh_hocsinh = cursor.fetchall()
+
+    query = "select * from phuhuynh"
+    cursor.execute(query)
+    phuhuynh = cursor.fetchall()
+
     query = "select * from hocsinh;"
     cursor.execute(query)
     hocsinh = cursor.fetchall()
+
     query = "select * from giaovien"
     cursor.execute(query)
     giaovien = cursor.fetchall()
-    return render_template('views/admin/student_class.html',num_student=len(lophoc_hocsinh),hocsinh=hocsinh,classes=lophoc_hocsinh,role=session['role'])
+
+    query = "select * from lophoc"
+    cursor.execute(query)
+    lophoc = cursor.fetchall()
+    
+    query = "select * from lophoc_giaovien where id_giaovien=\'"+session['user']+"\'"
+    print(query)
+    cursor.execute(query)
+    lophoc_giaovien = cursor.fetchall()
+
+    return render_template('views/admin/student_class.html',num_student=len(lophoc_hocsinh),lophoc=lophoc,lophoc_giaovien=lophoc_giaovien,phuhuynh=phuhuynh,phuhuynh_hocsinh=phuhuynh_hocsinh,hocsinh=hocsinh,classes=lophoc_hocsinh,role=session['role'])
 
 @app.route('/admin/update_student_class',methods=['POST'])
 def update_student_class():
@@ -356,8 +386,8 @@ def update_student_class():
             image.save('/static/uploads/'+randomname+'.'+image.filename.split('.')[1])
     except:
         print('have error!')
-        return redirect('/admin/quanly_class')
-    return redirect('/admin/quanly_class')
+        return redirect('/quanly_class')
+    return redirect('/quanly_class')
 
 @app.route('/classes',methods=['GET'])
 def classes():
@@ -442,13 +472,14 @@ def add_giaovien():
         gender = 0
     birthday = request.form['birthday']
     password = request.form['password']
+    sdt = request.form['sdt']
     image = request.files['file']
     try:
         conn = db.connect()
         cursor = conn.cursor()
         randomname = get_random_string(15)
         newimage = '/static/uploads/teachers/'+randomname+'.'+image.filename.split('.')[1]
-        query = 'insert into giaovien values(\"'+code+'\",\"'+name+'\",\"'+newimage+'\",'+str(gender)+',\"'+birthday+'\",'+'\"'+password+'\"'+',1)'
+        query = 'insert into giaovien values(\"'+code+'\",\"'+name+'\",\"'+newimage+'\",'+str(gender)+',\"'+birthday+'\",'+'\"'+password+'\"'+',1,\"'+sdt+'\")'
         print(query)   
         cursor.execute(query)
         conn.commit()
@@ -467,6 +498,7 @@ def update_giaovien():
         return redirect(url_for('login'))
     name = request.form['name1']
     code = request.form['code1']
+    sdt = request.form['sdt1']
     gender = 1
     if request.form['gender1'] == 'female':
         gender = 0
@@ -478,7 +510,7 @@ def update_giaovien():
 
             conn = db.connect()
             cursor = conn.cursor()
-            query = 'update giaovien set ten=\"'+name+'\", gioitinh='+str(gender)+', ngaysinh=\"'+birthday+'\",matkhau=\"'+password+'\" where id=\"'+code+'\" '
+            query = 'update giaovien set ten=\"'+name+'\", gioitinh='+str(gender)+', ngaysinh=\"'+birthday+'\",matkhau=\"'+password+'\", sdt=\"'+sdt+'\" where id=\"'+code+'\" '
             print(query)
             cursor.execute(query)
             conn.commit()
@@ -488,7 +520,7 @@ def update_giaovien():
             randomname = get_random_string(15)
 
             newimage = '/static/uploads/teachers/'+randomname+'.'+image.filename.split('.')[1]
-            query = 'update giaovien set ten=\"'+name+'\",hinhanh=\"'+newimage+'\", gioitinh='+str(gender)+', ngaysinh=\"'+birthday+'\",matkhau=\"'+password+'\" where id=\"'+code+'\"'
+            query = 'update giaovien set ten=\"'+name+'\",hinhanh=\"'+newimage+'\", gioitinh='+str(gender)+', ngaysinh=\"'+birthday+'\",matkhau=\"'+password+'\",sdt=\"'+sdt+'\" where id=\"'+code+'\"'
             cursor.execute(query)
             conn.commit() 
             image.save('./static/uploads/teachers/'+randomname+'.'+image.filename.split('.')[1])
@@ -501,6 +533,7 @@ def update_giaovien():
 def del_giaovien():
     if 'user' not in session:
         return redirect(url_for('login'))
+    print('------------------------------')
     id = request.form['id']
     conn = db.connect()
     cursor = conn.cursor()
@@ -611,6 +644,7 @@ def add_student():
         gender = 0
     birthday = request.form['birthday']
     image = request.files['file']
+    id_lop = request.form['lop']
     # try:
     conn = db.connect()
     cursor = conn.cursor()
@@ -620,10 +654,21 @@ def add_student():
     print(query)   
     cursor.execute(query)
     conn.commit()
+
+    query = 'select * from hocsinh where ten=\"'+name+'\" and hinhanh=\"'+newimage+'\" and gioitinh='+str(gender)+' and ngaysinh=\"'+birthday+'\"'
+    print(query)   
+    cursor.execute(query)
+    hocsinh= cursor.fetchone()
+
+    query = 'insert into lophoc_hocsinh values(\"'+id_lop+'\",\"'+session['user']+'\",'+str(hocsinh[0])+')'
+    print(query)   
+    cursor.execute(query)
+    conn.commit()
+
     image.save('static/uploads/'+randomname+'.'+image.filename.split('.')[1])
     # except:
         # return redirect(url_for('student'))
-    return redirect(url_for('student'))
+    return redirect(url_for('quanly_class'))
 
 @app.route('/admin/del_student',methods=['POST'])
 def del_student():

@@ -22,6 +22,7 @@
                   <th>Hình ảnh</th>
                   <th>Giới tính</th>
                   <th>Ngày sinh</th>
+                  <th>Số điện thoại</th>
                   <th>Quyền</th>
                   <th>Control</th>
               </tr>
@@ -52,6 +53,7 @@
                           khác
                       {%endif%}
                       <td>{{giaoviens[index][4]}}</td>
+                      <td>{{giaoviens[index][7]}}</td>
                       <td>
                         {% if giaoviens[index][6] == 0 %}
                           Admin
@@ -113,12 +115,12 @@
                                                 <select  class="form-control" id="gender1" name="gender1" required>
                                                     <option value="">Select Gender</option>
                                                     <option value="male" value={{0}}
-                                                        {% if giaoviens[index][3] ==0 %}
+                                                        {% if giaoviens[index][3] ==1 %}
                                                             selected
                                                         {% endif %}
                                                     >Male</option>
                                                     <option value="female" value={{1}}
-                                                    {% if giaoviens[index][3] ==1 %}
+                                                    {% if giaoviens[index][3] ==0 %}
                                                     selected
                                                 {% endif %}
                                                     >Female</option>
@@ -127,6 +129,10 @@
                                             <div class="form-group">
                                                 <label>Ngày sinh</label>
                                                 <input name="birthday1" id="birthday1" type="date" class="form-control" value={{giaoviens[index][4]}} required>
+                                            </div>					
+                                            <div class="form-group">
+                                                <label>Số điện thoại</label>
+                                                <input name="sdt1" id="sdt1" type="text" class="form-control" value={{giaoviens[index][7]}} required>
                                             </div>					
                                             <div class="form-group">
                                                 <label>Mật khẩu</label>
@@ -173,13 +179,17 @@
                       <label>Giới tính</label>
                       <select  class="form-control" id="gender" name="gender" required>
                           <option value="">Select Gender</option>
-                          <option value="male" value={{0}}>Male</option>
-                          <option value="female" value={{1}}>Female</option>
+                          <option value="male" value={{0}}>Nam</option>
+                          <option value="female" value={{1}}>Nữ</option>
                         </select>
                   </div>
                   <div class="form-group">
                       <label>Ngày sinh</label>
                       <input name="birthday" id="birthday" type="date" class="form-control" required>
+                  </div>					
+                  <div class="form-group">
+                      <label>Số điện thoại</label>
+                      <input name="sdt" id="sdt" type="text" class="form-control" required>
                   </div>					
                   <div class="form-group">
                       <label>Mật khẩu</label>
