@@ -54,9 +54,9 @@
                             </thead>
                             <tbody>
                               {%for y in range(phuhuynh_hocsinh|length)%}
-                              {%if hocsinh[x][0] == phuhuynh_hocsinh[y][1] %}
-                              {%for z in phuhuynh%}
-                                {%if z[0] == phuhuynh_hocsinh[y][0]%}
+                                {%if hocsinh[x][0] == phuhuynh_hocsinh[y][1] %}
+                                  {%for z in phuhuynh%}
+                                    {%if z[0] == phuhuynh_hocsinh[y][0]%}
                                 <tr style="background-color:white">
                                   <td>{{y+1}}</td>
                                   <td>
@@ -75,10 +75,10 @@
                                   </td>
                                   <td>{{z[5]}}</td>
                                 </tr>
-                                {%endif%}
-                              {%endfor%}
+                                  {%endif%}
+                                {%endfor%}
                               {%endif%}
-                              {%endfor%}
+                            {%endfor%}
                             </tbody>
                           </table>
                           <div class="modal-footer">
@@ -88,7 +88,7 @@
                     </div>
 
                   </div>
-                  <div id={{'deleteEmployeeModal'+hocsinh[x][1]}} class="modal fade">
+                  <div id={{'deleteEmployeeModal'+hocsinh[x][0]|string}} class="modal fade">
                       <div class="modal-dialog">
                           <div class="modal-content">
                               <form action='/admin/del_student' method="post">

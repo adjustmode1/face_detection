@@ -386,8 +386,8 @@ def update_student_class():
             image.save('/static/uploads/'+randomname+'.'+image.filename.split('.')[1])
     except:
         print('have error!')
-        return redirect('/quanly_class')
-    return redirect('/quanly_class')
+        return redirect('quanly_class')
+    return redirect('quanly_class')
 
 @app.route('/classes',methods=['GET'])
 def classes():
@@ -649,7 +649,11 @@ def add_student():
     conn = db.connect()
     cursor = conn.cursor()
     randomname = get_random_string(15)
-    newimage = '/static/uploads/'+randomname+'.'+image.filename.split('.')[1]
+    if(image.filename != ''):
+        newimage = '/static/uploads/'+randomname+'.'+image.filename.split('.')[1]
+        image.save('static/uploads/'+randomname+'.'+image.filename.split('.')[1])
+    else:
+        newimage = ''
     query = 'insert into hocsinh(ten,hinhanh,gioitinh,ngaysinh) values(\"'+name+'\",\"'+newimage+'\",'+str(gender)+',\"'+birthday+'\")'
     print(query)   
     cursor.execute(query)
@@ -665,9 +669,8 @@ def add_student():
     cursor.execute(query)
     conn.commit()
 
-    image.save('static/uploads/'+randomname+'.'+image.filename.split('.')[1])
     # except:
-        # return redirect(url_for('student'))
+    #     return redirect(url_for('student'))
     return redirect(url_for('quanly_class'))
 
 @app.route('/admin/del_student',methods=['POST'])
@@ -687,8 +690,8 @@ def del_student():
         cursor.execute(query)
         conn.commit()
     except:
-        return redirect(url_for('student'))
-    return redirect(url_for('student'))
+        return redirect(url_for('quanly_class'))
+    return redirect(url_for('quanly_class'))
 
 @app.route('/admin/del_phuhuynh',methods=['POST'])
 def del_phuhuynh():
