@@ -16,7 +16,7 @@
                     {%
                       for cl in classes_show
                     %}
-                      <a class="dropdown-item" href={{"/classes/"+cl[1]|string}}>Lớp {{cl[1]}}</a>
+                      <a class="dropdown-item" href={{"/classes/"+cl[0]|string}}>Lớp {{cl[1]}}</a>
                     {%endfor%}
                   </div>
                 </div>
