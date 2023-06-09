@@ -313,6 +313,11 @@ def phuhuynh():
     query = "select * from phuhuynh;"
     cursor.execute(query)
     ph = cursor.fetchall()
+
+    query = "select * from phuhuynh_hocsinh;"
+    cursor.execute(query)
+    phuhuynh_hocsinh = cursor.fetchall()
+
     return render_template('views/admin/phuhuynh.html',num_phuhuynh=len(ph),phuhuynhs=ph,role=session['role'])
 
 @app.route('/admin/quanly_class',methods=['GET'])
