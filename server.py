@@ -320,6 +320,29 @@ def phuhuynh():
 
     return render_template('views/admin/phuhuynh.html',num_phuhuynh=len(ph),phuhuynhs=ph,role=session['role'])
 
+@app.route('/admin/update_phuhuynh',methods=['POST'])
+def update_phuhuynh():
+    if 'user' not in session:
+        return redirect(url_for('login'))
+    
+    conn = db.connect()
+    cursor = conn.cursor()
+
+    id = request.form['id1']
+    name = request.form['name1']
+    birthday = request.form['birthday1']
+    phone = request.form['phone1']
+    address = request.form['address1']
+    gender = 1
+    if request.form['gender1'] == 'female':
+        gender = 0
+
+    query = 'update phuhuynh set ten=\"'+name+'\",ngaysinh=\"'+birthday+'\",sodienthoai=\"'+phone+'\",diachi=\"'+address+'\",gioitinh='+str(gender)+' where id=\"'+id+'\"'
+    cursor.execute(query)
+    conn.commit()
+
+    return redirect('/admin/phuhuynh')
+
 @app.route('/admin/quanly_class',methods=['GET'])
 def quanly_class():
     if 'user' not in session:
