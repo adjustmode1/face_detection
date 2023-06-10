@@ -726,12 +726,15 @@ def del_phuhuynh():
     id = request.form['id']
     conn = db.connect()
     cursor = conn.cursor()
-    query = 'delete from phuhuynh where id=\"'+id+"\""
-    cursor.execute(query)
-    conn.commit()
-    os.remove('static/uploads/imgs/'+id+'.jpg')
-    os.remove('static/uploads/info/'+id+'.txt')
-    load_faces()
+    try:
+        query = 'delete from phuhuynh where id=\"'+id+"\""
+        cursor.execute(query)
+        conn.commit()
+        os.remove('static/uploads/imgs/'+id+'.jpg')
+        os.remove('static/uploads/info/'+id+'.txt')
+        load_faces()
+    expect:
+        return redirect(url_for('phuhuynh'))
     return redirect(url_for('phuhuynh'))
 
 @app.route('/capture', methods=['POST'])
