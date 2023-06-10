@@ -26,7 +26,12 @@
         {% for index in range(number_teacher_class) %}
         <tr>
           <td>{{index+1}}</td>
-          <td>{{lophoc_giaovien[index][0]}}</td>
+          <td>{% for lh in classes %}
+            {% if lh[0] == lophoc_giaovien[index][0] %}
+              {{lh[1]}}
+            {% endif %}
+             
+            {% endfor %}</td>
           <td>
             {% for x in lophoc_giaovien %}
               {% for y in giaovien %}
@@ -38,8 +43,8 @@
             {% endfor %}
             </td>
           <td>
-                <a href={{'#deleteEmployeeModal'+lophoc_giaovien[index][0]}} class="delete" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Delete">&#xE872;</i></a>
-                <div id={{'deleteEmployeeModal'+lophoc_giaovien[index][0]}} class="modal fade">
+                <a href={{'#deleteEmployeeModal'+lophoc_giaovien[index][0]|string}} class="delete" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Delete">&#xE872;</i></a>
+                <div id={{'deleteEmployeeModal'+lophoc_giaovien[index][0]|string}} class="modal fade">
                     <div class="modal-dialog">
                         <div class="modal-content">
                             <form action='/admin/del_teacher_class' method="post">
