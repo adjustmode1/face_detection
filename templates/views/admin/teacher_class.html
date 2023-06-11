@@ -65,6 +65,44 @@
                         </div>
                     </div>
                 </div>
+                <a href={{'#updateEmployeeModal'+lophoc_giaovien[index][0]|string}} class="edit" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Update">&#xe3c9;</i></a>
+                <div id={{'updateEmployeeModal'+lophoc_giaovien[index][0]|string}} class="modal fade">
+                  <div class="modal-dialog">
+                    <div class="modal-content">
+                      <form id="user-form" method="POST" action='/admin/update_teacher_class'>
+                        <div class="modal-header">
+                          <h4 class="modal-title">Cập nhật phân công giáo viên</h4>
+                          <a href="">&times;</a>
+                        </div>
+                        <div class="modal-body">
+                          <label>Lớp học</label>
+                          <input value='{{lophoc_giaovien[index][0]}}' class="form-control" disabled/>
+                          <input value='{{lophoc_giaovien[index][0]}}' name='class' hidden/>
+                          <input value='{{lophoc_giaovien[index][1]}}' name='teacher1' hidden/>
+                          <label>Giáo viên</label>
+                          <select class="custom-select" name='teacher'>
+                            <option>Giáo viên</option>
+                            {% for x in  giaovien %}
+                              <option value={{x[0]}}
+                                {% if lophoc_giaovien[index][1] == x[0] %}
+                                  selected
+                                {% endif %}
+                              >{{x[1]}}</option>
+                            {% endfor %}
+                          </select>
+                        <div class="modal-footer">
+                          <input
+                            type="button"
+                            class="btn btn-default"
+                            data-dismiss="modal"
+                            value="Cancel"
+                          />
+                          <input type="submit" class="btn btn-success" value="Cập nhật" />
+                        </div>
+                      </form>
+                    </div>
+                  </div>
+                </div>
             </td>
         </tr>
         {%endfor%}
@@ -84,8 +122,10 @@
         <div class="modal-body">
           <select class="custom-select" name='class'>
             <option selected>Lớp học</option>
-            {% for x in  lophoc_giaovien %}
-              <option value={{x[0]}}>{{x[0]}}</option>
+            {% for x in  classes %}
+              <option value={{x[0]}}>
+                 {{x[1]}}
+              </option>
             {% endfor %}
           </select>
           <select class="custom-select" name='teacher'>

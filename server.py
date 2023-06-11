@@ -318,7 +318,23 @@ def phuhuynh():
     cursor.execute(query)
     phuhuynh_hocsinh = cursor.fetchall()
 
-    return render_template('views/admin/phuhuynh.html',num_phuhuynh=len(ph),phuhuynhs=ph,role=session['role'])
+    query = "select * from lophoc_hocsinh where id_giaovien=\'"+session['user']+"\'"
+    cursor.execute(query)
+    lophoc_hocsinh = cursor.fetchall()
+
+    result = []
+
+    for lh_hs in lophoc_hocsinh:
+        for ph_hs in phuhuynh_hocsinh:
+            if lh_hs[2] == ph_hs[1]:
+                for phuhuynh in ph:
+                    if phuhuynh[0] == ph_hs[0]:
+                        result.append(phuhuynh)
+
+    print(result)
+
+
+    return render_template('views/admin/phuhuynh.html',num_phuhuynh=len(result),phuhuynhs=result,role=session['role'])
 
 @app.route('/admin/update_phuhuynh',methods=['POST'])
 def update_phuhuynh():
@@ -610,6 +626,22 @@ def add_teacher_class():
     conn.commit()
     return redirect(url_for('teacher_class'))
 
+@app.route('/admin/update_teacher_class',methods=['POST'])
+def update_teacher_class():
+    print(session)
+    if 'user' not in session:
+        return redirect(url_for('login'))
+    lophoc = request.form['class']
+    giaovien = request.form['teacher']
+    giaovien1 = request.form['teacher1']
+    conn = db.connect()
+    cursor = conn.cursor()
+    query = 'update lophoc_giaovien set id_giaovien=\"'+giaovien+'\" where id_lophoc=\"'+lophoc+'\" and id_giaovien=\"'+giaovien1+'\"' 
+    print(query)
+    cursor.execute(query)
+    conn.commit()
+    return redirect(url_for('teacher_class'))
+
 @app.route('/admin/del_teacher_class',methods=['POST'])
 def del_teacher_class():
     if 'user' not in session:
@@ -733,7 +765,7 @@ def del_phuhuynh():
         os.remove('static/uploads/imgs/'+id+'.jpg')
         os.remove('static/uploads/info/'+id+'.txt')
         load_faces()
-    expect:
+    except:
         return redirect(url_for('phuhuynh'))
     return redirect(url_for('phuhuynh'))
 
