@@ -73,12 +73,11 @@
                                                     <div class="modal-content">
                                                         <form action='/admin/del_giaovien' method="post">
                                                             <div class="modal-header">						
-                                                                <h4 class="modal-title">Delete Employee</h4>
+                                                                <h4 class="modal-title">Xóa giáo viên</h4>
                                                                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
                                                             </div>
                                                             <div class="modal-body">					
-                                                                <p>Are you sure you want to delete these Records?</p>
-                                                                <p class="text-warning"><small>This action cannot be undone.</small></p>
+                                                                <p>Bạn có muốn xóa không?</p>
                                                             </div>
                                                             <input name="id" value={{giaoviens[index][0]}} hidden/>
                                                             <div class="modal-footer">
@@ -113,7 +112,7 @@
                                             <div class="form-group">
                                                 <label>Giới tính</label>
                                                 <select  class="form-control" id="gender1" name="gender1" required>
-                                                    <option value="">Select Gender</option>
+                                                    <option value="">Chọn giới tính</option>
                                                     <option value="male" value={{0}}
                                                         {% if giaoviens[index][3] ==1 %}
                                                             selected
