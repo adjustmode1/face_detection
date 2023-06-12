@@ -62,18 +62,20 @@
             required
           />
         </div>
-        {% if student != -1 %}
-          <div class="form-group">
-            <input
-              type="text"
-              class="form-control"
-              id="student"
-              name="student"
-              hidden
-              value={{student}}
-            />
-          </div>
-        {% endif %}
+        <div class="form-group">
+          <label for="hocsinh">Học Sinh:</label>
+          <select class="form-control" id="hocsinh" name="student">
+          {% for lhhs in lophoc_hocsinh %}
+          <option value='{{lhhs[2]}}'>
+            {% for hs in hocsinh %}
+              {% if lhhs[2] == hs[0] %}
+                {{hs[1]}}
+              {% endif %}
+            {% endfor %}
+          </option>
+        {% endfor %}
+          </select>
+        </div>
         <div class="form-group">
           <label for="gender">Giới tính:</label>
           <select class="form-control" id="gender" name="gender" required>
@@ -149,7 +151,7 @@
       .then((response) => {
         if (response.ok) {
           alert("Image and data saved successfully");
-          window.location.href = '/admin/phuhuynh';
+          window.location.href = "/admin/phuhuynh";
         } else {
           throw new Error("Something went wrong");
         }

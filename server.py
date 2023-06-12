@@ -662,7 +662,15 @@ def del_teacher_class():
 def add_phuhuynh():
     if 'user' not in session:
         return redirect(url_for('login'))
-    return render_template('views/admin/addphuhuynh.html',student=-1,role=session['role'])
+    conn = db.connect()
+    cursor = conn.cursor()
+    query = 'select * from lophoc_hocsinh where id_giaovien=\"'+session['user']+'\"' 
+    cursor.execute(query)
+    lophoc_hocsinh = cursor.fetchall()
+    query = 'select * from hocsinh' 
+    cursor.execute(query)
+    hocsinh = cursor.fetchall()
+    return render_template('views/admin/addphuhuynh.html',student=-1,role=session['role'],lophoc_hocsinh=lophoc_hocsinh,hocsinh=hocsinh)
 
 @app.route('/admin/add_phuhuyn/<id>',methods=['GET'])
 def add_phuhuynh_and_student(id):
