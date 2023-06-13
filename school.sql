@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Máy chủ: 127.0.0.1
--- Thời gian đã tạo: Th6 13, 2023 lúc 07:34 AM
+-- Thời gian đã tạo: Th6 13, 2023 lúc 05:53 PM
 -- Phiên bản máy phục vụ: 10.4.27-MariaDB
 -- Phiên bản PHP: 8.1.12
 
@@ -162,12 +162,13 @@ CREATE TABLE `phuhuynh` (
 
 INSERT INTO `phuhuynh` (`id`, `ten`, `hinhanh`, `gioitinh`, `sodienthoai`, `ngaysinh`, `diachi`) VALUES
 ('jxdacbrmkuqwobm', '1', 'static/uploads/imgs/jxdacbrmkuqwobm.jpg', 1, '1', '0000-00-00', '1'),
-('lqalglsgtossmik', '123123', 'static/uploads/imgs/lqalglsgtossmik.jpg', 1, '0339188535', '2023-06-03', 'cần thơ'),
 ('ntjptmupjsyeppz', 'Nguyễn Thành Huy', 'static/uploads/imgs/ntjptmupjsyeppz.jpg', 1, '1', '0000-00-00', '1'),
 ('sawharjvwllifez', 'Nguyễn Thành Huy', 'static/uploads/imgs/sawharjvwllifez.jpg', 1, '0339188535', '2023-06-09', 'cần thơ'),
+('siofhzokvtwzysr', 'Nguyễn Thành Huy', 'static/uploads/imgs/siofhzokvtwzysr.jpg', 1, '0339188535', '2023-06-10', 'cần thơ'),
+('tcaauairhnvqtxo', 'day la test 2', 'static/uploads/imgs/tcaauairhnvqtxo.jpg', 1, '01234567898', '2023-06-17', 'cần thơ'),
+('tmnwxplqjoaahxh', 'day la test', 'static/uploads/imgs/tmnwxplqjoaahxh.jpg', 1, '0339188535', '2023-06-10', 'cần thơ'),
 ('uypctcagftskboy', '111', 'static/uploads/imgs/uypctcagftskboy.jpg', 1, '1', '0000-00-00', '1'),
 ('vmoevnveldgssxp', 'a', 'static/uploads/imgs/vmoevnveldgssxp.jpg', 1, '0339188535', '2023-05-13', 'cần thơ'),
-('wjypzfnbcdkjhog', 'a', 'static/uploads/imgs/wjypzfnbcdkjhog.jpg', 1, '0339188535', '0000-00-00', '1'),
 ('zmhvndfgobozpab', 'Nguyễn Thành Huy', 'static/uploadsimgs/zmhvndfgobozpab.jpg', 1, '0339188535', '2023-05-06', 'cần thơ');
 
 -- --------------------------------------------------------
@@ -192,6 +193,8 @@ INSERT INTO `phuhuynh_hocsinh` (`id_phuhuynh`, `id_hocsinh`) VALUES
 ('jxdacbrmkuqwobm', 10),
 ('lqalglsgtossmik', 1),
 ('ntjptmupjsyeppz', 13),
+('siofhzokvtwzysr', 1),
+('tcaauairhnvqtxo', 13),
 ('uypctcagftskboy', 0),
 ('vmoevnveldgssxp', 1),
 ('wjypzfnbcdkjhog', 13),

@@ -63,17 +63,22 @@
           />
         </div>
         <div class="form-group">
-          <label for="hocsinh">Học Sinh:</label>
-          <select class="form-control" id="hocsinh" name="student">
-          {% for lhhs in lophoc_hocsinh %}
-          <option value='{{lhhs[2]}}'>
-            {% for hs in hocsinh %}
-              {% if lhhs[2] == hs[0] %}
-                {{hs[1]}}
-              {% endif %}
-            {% endfor %}
-          </option>
+          {% if student == -1 %}
+            <label for="hocsinh">Học Sinh:</label>
+            <select class="form-control" id="hocsinh" name="student">
+            {% for lhhs in lophoc_hocsinh %}
+            <option value='{{lhhs[2]}}'>
+              {% for hs in hocsinh %}
+                {% if lhhs[2] == hs[0] %}
+                  {{hs[1]}}
+                {% endif %}
+              {% endfor %}
+            </option>
         {% endfor %}
+          {% else %}
+            <input value={{student}} name="student" hidden/>
+          {% endif %}
+
           </select>
         </div>
         <div class="form-group">
