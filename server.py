@@ -460,11 +460,17 @@ def view_lophoc(id):
     cursor.execute(query)
     hocsinh = cursor.fetchall() 
     gvcn = ''
-    for x in gv:
-        for y in lh:
-            if x[0] == y[1]:
+    for y in lh:
+        for x in gv:
+            if str(x[0]) == str(y[1]):
                 gvcn = x[1]
-    return render_template('views/classes.html',id=id,numclass=len(lh),classes_show=classes,classes=lh,gv=gv,hs=hocsinh,siso=len(lh),giaovienchunhhiem=gvcn)
+            else:
+                print('-----: ')
+    ten_lop = ''
+    for x in classes:
+        if str(x[0]) == str(id):
+            ten_lop = x[1]
+    return render_template('views/classes.html',id=ten_lop,numclass=len(lh),classes_show=classes,classes=lh,gv=gvcn,hs=hocsinh,siso=len(lh),giaovienchunhhiem=gvcn)
     
 @app.route('/test')
 def test():
